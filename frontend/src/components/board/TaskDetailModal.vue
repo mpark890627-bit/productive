@@ -1,49 +1,107 @@
 <template>
-  <v-dialog :model-value="open && !!task" max-width="820" scrollable @update:model-value="onDialogToggle">
+  <v-dialog :model-value="open && !!task" max-width="920" scrollable @update:model-value="onDialogToggle">
     <v-card v-if="task">
       <v-card-title class="d-flex align-center justify-space-between pt-5 px-5">
         <div>
-          <h3 class="modal-title">{{ task.title }}</h3>
-          <p class="modal-sub">태스크 상세 정보</p>
+          <h3 class="modal-title">태스크 상세/수정</h3>
+          <p class="modal-sub">{{ task.id }}</p>
         </div>
         <v-btn variant="text" icon="mdi-close" @click="$emit('close')" />
       </v-card-title>
 
-      <v-card-text class="px-5 pb-1">
+      <v-card-text class="px-5 pb-2">
+        <v-alert v-if="formErrorMessage" type="error" variant="tonal" class="mb-3">{{ formErrorMessage }}</v-alert>
         <v-alert v-if="commentErrorMessage" type="error" variant="tonal" class="mb-3">{{ commentErrorMessage }}</v-alert>
 
-        <div class="meta-grid">
-          <v-card variant="tonal" class="meta-card" color="surface">
-            <h4>설명</h4>
-            <p>{{ task.description || '없음' }}</p>
-          </v-card>
+        <v-form class="edit-grid" @submit.prevent="saveTask">
+          <v-text-field
+            v-model="form.title"
+            label="제목"
+            :rules="titleRules"
+            :disabled="formSubmitting"
+            density="comfortable"
+          />
+          <v-select
+            v-model="form.status"
+            label="상태"
+            :items="statusItems"
+            item-title="label"
+            item-value="value"
+            :disabled="formSubmitting"
+            density="comfortable"
+          />
+          <v-select
+            v-model="form.priority"
+            label="우선순위"
+            :items="priorityItems"
+            item-title="label"
+            item-value="value"
+            :disabled="formSubmitting"
+            density="comfortable"
+          />
+          <v-text-field
+            v-model="form.dueDate"
+            label="마감일"
+            type="date"
+            placeholder="YYYY-MM-DD"
+            :disabled="formSubmitting"
+            density="comfortable"
+          />
+          <v-text-field
+            v-model="form.assigneeUserId"
+            label="담당자 사용자 ID(UUID)"
+            placeholder="비우면 기존값 유지"
+            :disabled="formSubmitting"
+            density="comfortable"
+          />
+          <v-textarea
+            v-model="form.description"
+            label="설명"
+            rows="3"
+            auto-grow
+            :disabled="formSubmitting"
+          />
 
-          <v-card variant="tonal" class="meta-card" color="surface">
-            <h4>우선순위</h4>
-            <div class="priority-row">
-              <v-select
-                v-model="priorityInput"
-                :items="priorityItems"
-                item-title="label"
-                item-value="value"
-                density="compact"
-                hide-details
-                :disabled="prioritySubmitting"
-              />
-              <v-btn size="small" color="primary" :loading="prioritySubmitting" @click="updatePriority">변경</v-btn>
-            </div>
-          </v-card>
+          <div class="form-actions">
+            <v-btn type="submit" color="primary" :loading="formSubmitting" :disabled="formSubmitting">
+              저장
+            </v-btn>
+          </div>
+        </v-form>
 
-          <v-card variant="tonal" class="meta-card" color="surface">
-            <h4>기본 정보</h4>
-            <div class="chips">
-              <v-chip size="small" prepend-icon="mdi-calendar-month-outline">{{ task.dueDate || '마감 없음' }}</v-chip>
-              <v-chip size="small" prepend-icon="mdi-account-outline">{{ task.assigneeUserId || '담당자 없음' }}</v-chip>
-              <v-chip size="small" :color="priorityColor" variant="tonal">{{ priorityInput }}</v-chip>
-            </div>
-            <p class="tag-text"><strong>태그:</strong> {{ tagText }}</p>
-          </v-card>
-        </div>
+        <v-divider class="my-4" />
+
+        <section class="tags-section">
+          <h4>태그</h4>
+          <div class="tag-controls">
+            <v-text-field
+              v-model="tagInput"
+              label="태그명"
+              density="compact"
+              hide-details
+              :disabled="tagSubmitting"
+              @keyup.enter="addTag"
+            />
+            <v-btn color="primary" variant="tonal" :loading="tagSubmitting" :disabled="tagSubmitting" @click="addTag">
+              태그 추가
+            </v-btn>
+          </div>
+          <div class="tag-list">
+            <v-chip
+              v-for="tag in task.tags"
+              :key="tag.id"
+              size="small"
+              class="mr-2 mb-2"
+              closable
+              @click:close="removeTag(tag.id)"
+            >
+              {{ tag.name }}
+            </v-chip>
+            <span v-if="task.tags.length === 0" class="muted">태그 없음</span>
+          </div>
+        </section>
+
+        <v-divider class="my-4" />
 
         <section class="comments">
           <div class="comments-head">
@@ -99,14 +157,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { extractErrorMessage } from '../../api/apiClient'
 import { createTaskComment, deleteComment, getTaskComments } from '../../api/comments'
-import { patchTask } from '../../api/tasks'
+import { getTags, createTag } from '../../api/tags'
+import { attachTagToTask, detachTagFromTask, getTaskById, patchTask } from '../../api/tasks'
 import { useAuthStore } from '../../stores/auth'
 import type { CommentItem } from '../../types/comment'
-import type { TaskItem, TaskPriority } from '../../types/task'
-import { taskPriorityColors } from '../../utils/taskVisuals'
+import type { TaskItem, TaskPriority, TaskStatus } from '../../types/task'
 
 const props = defineProps<{
   open: boolean
@@ -126,31 +184,59 @@ const commentInput = ref('')
 const commentSubmitting = ref(false)
 const deletingCommentId = ref<string | null>(null)
 const commentErrorMessage = ref('')
-const priorityInput = ref<TaskPriority>('MEDIUM')
-const prioritySubmitting = ref(false)
+const formSubmitting = ref(false)
+const formErrorMessage = ref('')
+const tagInput = ref('')
+const tagSubmitting = ref(false)
 const authStore = useAuthStore()
 
-const priorityItems = [
+const form = reactive<{
+  title: string
+  description: string
+  status: TaskStatus
+  priority: TaskPriority
+  dueDate: string
+  assigneeUserId: string
+}>({
+  title: '',
+  description: '',
+  status: 'TODO',
+  priority: 'MEDIUM',
+  dueDate: '',
+  assigneeUserId: '',
+})
+
+const statusItems: Array<{ label: string; value: TaskStatus }> = [
+  { label: 'TODO', value: 'TODO' },
+  { label: 'IN_PROGRESS', value: 'IN_PROGRESS' },
+  { label: 'DONE', value: 'DONE' },
+]
+
+const priorityItems: Array<{ label: string; value: TaskPriority }> = [
   { label: 'LOW', value: 'LOW' },
   { label: 'MEDIUM', value: 'MEDIUM' },
   { label: 'HIGH', value: 'HIGH' },
 ]
 
+const titleRules = [(v: string) => !!v?.trim() || '제목은 필수입니다.']
 const commentRules = [(v: string) => !!v?.trim() || '댓글을 입력하세요.']
-
-const tagText = computed(() => {
-  if (!props.task?.tags?.length) {
-    return '없음'
-  }
-  return props.task.tags.map((tag) => tag.name).join(', ')
-})
-
-const priorityColor = computed(() => taskPriorityColors[priorityInput.value])
 
 const onDialogToggle = (value: boolean) => {
   if (!value) {
     emit('close')
   }
+}
+
+const syncFormFromTask = () => {
+  if (!props.task) {
+    return
+  }
+  form.title = props.task.title ?? ''
+  form.description = props.task.description ?? ''
+  form.status = props.task.status ?? 'TODO'
+  form.priority = props.task.priority ?? 'MEDIUM'
+  form.dueDate = props.task.dueDate ?? ''
+  form.assigneeUserId = props.task.assigneeUserId ?? ''
 }
 
 const loadComments = async () => {
@@ -168,6 +254,79 @@ const loadComments = async () => {
     emit('error', message)
   } finally {
     loadingComments.value = false
+  }
+}
+
+const refreshTaskDetail = async () => {
+  if (!props.task) {
+    return
+  }
+  const detail = await getTaskById(props.task.id)
+  emit('updated', detail)
+}
+
+const saveTask = async () => {
+  if (!props.task) {
+    return
+  }
+  if (!form.title.trim()) {
+    formErrorMessage.value = '제목은 필수입니다.'
+    return
+  }
+
+  try {
+    formSubmitting.value = true
+    formErrorMessage.value = ''
+    const updated = await patchTask(props.task.id, {
+      title: form.title.trim(),
+      description: form.description.trim() ? form.description.trim() : null,
+      status: form.status,
+      priority: form.priority,
+      dueDate: form.dueDate || null,
+      assigneeUserId: form.assigneeUserId.trim() ? form.assigneeUserId.trim() : null,
+    })
+    emit('updated', updated)
+  } catch (error) {
+    const message = extractErrorMessage(error, '태스크 수정에 실패했습니다.')
+    formErrorMessage.value = message
+    emit('error', message)
+  } finally {
+    formSubmitting.value = false
+  }
+}
+
+const addTag = async () => {
+  if (!props.task || !tagInput.value.trim()) {
+    return
+  }
+  try {
+    tagSubmitting.value = true
+    const name = tagInput.value.trim()
+    const existing = await getTags(name)
+    const tag =
+      existing.find((item) => item.name.trim().toLowerCase() === name.toLowerCase()) ?? (await createTag(name))
+    await attachTagToTask(props.task.id, tag.id)
+    tagInput.value = ''
+    await refreshTaskDetail()
+  } catch (error) {
+    emit('error', extractErrorMessage(error, '태그 추가에 실패했습니다.'))
+  } finally {
+    tagSubmitting.value = false
+  }
+}
+
+const removeTag = async (tagId: string) => {
+  if (!props.task) {
+    return
+  }
+  try {
+    tagSubmitting.value = true
+    await detachTagFromTask(props.task.id, tagId)
+    await refreshTaskDetail()
+  } catch (error) {
+    emit('error', extractErrorMessage(error, '태그 제거에 실패했습니다.'))
+  } finally {
+    tagSubmitting.value = false
   }
 }
 
@@ -202,27 +361,12 @@ const removeComment = async (commentId: string) => {
   }
 }
 
-const updatePriority = async () => {
-  if (!props.task) {
-    return
-  }
-  try {
-    prioritySubmitting.value = true
-    const updated = await patchTask(props.task.id, { priority: priorityInput.value })
-    emit('updated', updated)
-  } catch (error) {
-    emit('error', extractErrorMessage(error, '우선순위 변경에 실패했습니다.'))
-  } finally {
-    prioritySubmitting.value = false
-  }
-}
-
 watch(
-  () => [props.open, props.task?.id, props.task?.priority],
+  () => [props.open, props.task?.id],
   async () => {
-    if (props.task?.priority) {
-      priorityInput.value = props.task.priority
-    }
+    formErrorMessage.value = ''
+    commentErrorMessage.value = ''
+    syncFormFromTask()
     if (props.open && props.task?.id) {
       await loadComments()
     }
@@ -240,48 +384,44 @@ watch(
 .modal-sub {
   margin: 4px 0 0;
   color: #64748b;
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.meta-grid {
+.edit-grid {
   display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.meta-card {
-  padding: 10px;
+.edit-grid .v-textarea,
+.form-actions {
+  grid-column: 1 / -1;
 }
 
-.meta-card h4 {
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tags-section h4,
+.comments h4 {
   margin: 0 0 8px;
-  font-size: 13px;
 }
 
-.meta-card p {
-  margin: 0;
-  color: #475569;
-}
-
-.priority-row {
+.tag-controls {
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-.chips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+.tag-list {
+  margin-top: 10px;
+  min-height: 24px;
 }
 
-.tag-text {
-  margin-top: 8px;
+.muted {
+  color: #64748b;
   font-size: 13px;
-}
-
-.comments {
-  margin-top: 16px;
 }
 
 .comments-head {
@@ -291,18 +431,16 @@ watch(
   margin-bottom: 8px;
 }
 
-.comments-head h4 {
-  margin: 0;
-}
-
 .comment-list {
+  max-height: 220px;
+  overflow: auto;
+  margin-bottom: 8px;
   border: 1px solid rgba(var(--v-theme-outline), 0.2);
   border-radius: 10px;
-  background: rgba(var(--v-theme-surface), 0.4);
 }
 
-.comment-item {
-  border-bottom: 1px solid rgba(var(--v-theme-outline), 0.14);
+.comment-item + .comment-item {
+  border-top: 1px solid rgba(var(--v-theme-outline), 0.1);
 }
 
 .comment-head {
@@ -312,12 +450,12 @@ watch(
 }
 
 .comment-content {
-  margin: 0;
+  margin: 4px 0;
   white-space: pre-wrap;
 }
 
 .comment-form {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .comment-actions {
@@ -325,9 +463,14 @@ watch(
   justify-content: flex-end;
 }
 
-@media (max-width: 960px) {
-  .meta-grid {
+@media (max-width: 768px) {
+  .edit-grid {
     grid-template-columns: 1fr;
+  }
+
+  .tag-controls {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 </style>

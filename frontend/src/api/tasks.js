@@ -25,3 +25,6 @@ export async function patchTask(taskId, payload) {
 export async function attachTagToTask(taskId, tagId) {
     await apiClient.post(`/api/tasks/${taskId}/tags/${tagId}`);
 }
+export async function detachTagFromTask(taskId, tagId) {
+    await apiClient.delete(`/api/tasks/${taskId}/tags/${tagId}`);
+}

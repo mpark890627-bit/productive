@@ -15,11 +15,11 @@ interface GetProjectTasksParams {
 
 interface UpdateTaskPayload {
   title?: string
-  description?: string
+  description?: string | null
   status?: TaskStatus
   priority?: 'LOW' | 'MEDIUM' | 'HIGH'
-  dueDate?: string
-  assigneeUserId?: string
+  dueDate?: string | null
+  assigneeUserId?: string | null
 }
 
 interface CreateTaskPayload {
@@ -60,4 +60,8 @@ export async function patchTask(taskId: string, payload: UpdateTaskPayload) {
 
 export async function attachTagToTask(taskId: string, tagId: string) {
   await apiClient.post(`/api/tasks/${taskId}/tags/${tagId}`)
+}
+
+export async function detachTagFromTask(taskId: string, tagId: string) {
+  await apiClient.delete(`/api/tasks/${taskId}/tags/${tagId}`)
 }
