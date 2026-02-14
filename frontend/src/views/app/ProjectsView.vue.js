@@ -155,22 +155,26 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
-/** @type {__VLS_StyleScopedClasses['projects-header']} */ ;
-/** @type {__VLS_StyleScopedClasses['projects-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-left']} */ ;
 /** @type {__VLS_StyleScopedClasses['keyword-field']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "card" },
+    ...{ class: "card app-page" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.header, __VLS_intrinsicElements.header)({
-    ...{ class: "projects-header" },
+    ...{ class: "projects-header page-header" },
 });
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "header-left" },
 });
-__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
+    ...{ class: "page-title" },
+});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
+    ...{ class: "page-subtitle" },
+});
 const __VLS_0 = {}.VTextField;
 /** @type {[typeof __VLS_components.VTextField, typeof __VLS_components.vTextField, ]} */ ;
 // @ts-ignore
@@ -554,8 +558,12 @@ __VLS_117.slots.default;
 (__VLS_ctx.snackbar.message);
 var __VLS_117;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
+/** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['projects-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-left']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-subtitle']} */ ;
 /** @type {__VLS_StyleScopedClasses['keyword-field']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['mt-4']} */ ;

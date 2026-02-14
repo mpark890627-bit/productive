@@ -11,6 +11,8 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+/** @type {__VLS_StyleScopedClasses['project-table']} */ ;
+/** @type {__VLS_StyleScopedClasses['project-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['name-link']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
@@ -21,7 +23,7 @@ const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
     headers: (__VLS_ctx.headers),
     items: (__VLS_ctx.projects),
     itemValue: "id",
-    ...{ class: "project-table" },
+    ...{ class: "project-table section-card" },
     density: "comfortable",
     hover: true,
     hideDefaultFooter: true,
@@ -30,7 +32,7 @@ const __VLS_2 = __VLS_1({
     headers: (__VLS_ctx.headers),
     items: (__VLS_ctx.projects),
     itemValue: "id",
-    ...{ class: "project-table" },
+    ...{ class: "project-table section-card" },
     density: "comfortable",
     hover: true,
     hideDefaultFooter: true,
@@ -160,6 +162,7 @@ __VLS_3.slots.default;
 }
 var __VLS_3;
 /** @type {__VLS_StyleScopedClasses['project-table']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['name-link']} */ ;
 /** @type {__VLS_StyleScopedClasses['desc-cell']} */ ;
 /** @type {__VLS_StyleScopedClasses['actions']} */ ;

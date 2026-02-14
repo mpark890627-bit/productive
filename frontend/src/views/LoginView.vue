@@ -1,5 +1,5 @@
 <template>
-  <v-card-text class="auth-content">
+  <v-card-text class="auth-content app-page">
     <div class="brand-head">
       <v-chip color="primary" variant="tonal" size="small">PRODUCTIV</v-chip>
       <h2>로그인</h2>
@@ -86,30 +86,45 @@ const onSubmit = async () => {
 
 <style scoped>
 .auth-content {
-  padding: 28px;
+  padding: 32px;
 }
 
 .brand-head h2 {
-  margin: 12px 0 0;
-  font-size: 28px;
+  margin: 14px 0 0;
+  font-size: 30px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
 .brand-head p {
-  margin: 8px 0 0;
-  color: #64748b;
+  margin: 10px 0 0;
+  color: #5f6f86;
+  font-size: 0.95rem;
 }
 
 .auth-form {
-  margin-top: 20px;
+  margin-top: 8px;
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .helper-row {
-  margin-top: 12px;
+  margin-top: 2px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #475569;
+  color: #5f6f86;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 640px) {
+  .auth-content {
+    padding: 24px;
+  }
+
+  .brand-head h2 {
+    font-size: 26px;
+  }
 }
 </style>

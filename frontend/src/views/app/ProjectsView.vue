@@ -1,8 +1,11 @@
 <template>
-  <section class="card">
-    <header class="projects-header">
+  <section class="card app-page">
+    <header class="projects-header page-header">
       <div class="header-left">
-        <h2>Projects</h2>
+        <div>
+          <h2 class="page-title">Projects</h2>
+          <p class="page-subtitle">프로젝트를 생성하고 진행 상태를 한눈에 관리합니다.</p>
+        </div>
         <v-text-field
           v-model="keyword"
           prepend-inner-icon="mdi-magnify"
@@ -269,37 +272,31 @@ onMounted(loadProjects)
 
 <style scoped>
 .projects-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-
-.projects-header h2 {
-  margin: 0;
+  gap: 16px;
 }
 
 .keyword-field {
-  width: 320px;
+  width: 360px;
 }
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .pager {
-  margin-top: 14px;
+  margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 8px;
+  color: #5f6f86;
+  font-size: 0.92rem;
 }
 
 .delete-text {
@@ -312,11 +309,6 @@ onMounted(loadProjects)
 }
 
 @media (max-width: 960px) {
-  .projects-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .header-left {
     flex-direction: column;
     align-items: stretch;

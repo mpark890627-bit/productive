@@ -1,14 +1,14 @@
 <template>
-  <v-card class="task-card" rounded="lg" elevation="1" @click="$emit('open', task)">
+  <v-card class="task-card section-card" rounded="lg" elevation="0" @click="$emit('open', task)">
     <div class="head-row">
       <h4 class="title" :title="safeTitle">{{ safeTitle }}</h4>
-      <v-chip size="x-small" :color="priorityColor" variant="tonal">{{ safePriority }}</v-chip>
+      <v-chip :color="priorityColor" variant="tonal">{{ safePriority }}</v-chip>
     </div>
 
     <p class="desc">{{ task.description || '설명 없음' }}</p>
 
     <div class="meta-row">
-      <v-chip size="x-small" variant="outlined" prepend-icon="mdi-calendar-month-outline">
+      <v-chip variant="outlined" prepend-icon="mdi-calendar-month-outline">
         {{ task.dueDate || '마감 없음' }}
       </v-chip>
     </div>
@@ -70,16 +70,18 @@ const emitStatusChange = (status: TaskStatus) => {
 
 <style scoped>
 .task-card {
-  padding: 10px;
-  border: 1px solid rgba(var(--v-theme-outline), 0.2);
+  padding: 12px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.22);
+  background: rgba(var(--v-theme-surface-bright), 0.9);
   cursor: pointer;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
 }
 
 .task-card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
   border-color: rgba(var(--v-theme-primary), 0.45);
+  background: rgba(var(--v-theme-surface-bright), 1);
 }
 
 .head-row {
@@ -92,6 +94,7 @@ const emitStatusChange = (status: TaskStatus) => {
 .title {
   margin: 0;
   font-size: 14px;
+  font-weight: 700;
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -100,8 +103,8 @@ const emitStatusChange = (status: TaskStatus) => {
 }
 
 .desc {
-  margin: 8px 0;
-  color: #475569;
+  margin: 10px 0;
+  color: #5f6f86;
   font-size: 13px;
   line-height: 1.4;
   display: -webkit-box;
@@ -118,7 +121,7 @@ const emitStatusChange = (status: TaskStatus) => {
 }
 
 .status-row {
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .status-select {

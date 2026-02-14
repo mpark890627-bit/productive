@@ -122,17 +122,20 @@ onUnmounted(() => {
 
 .workspace-main {
   background:
-    radial-gradient(circle at 100% -5%, rgba(37, 99, 235, 0.08), transparent 22%),
+    radial-gradient(circle at 100% -5%, rgba(37, 99, 235, 0.09), transparent 22%),
+    radial-gradient(circle at -5% 100%, rgba(15, 118, 110, 0.06), transparent 24%),
     rgba(var(--v-theme-background), 1);
 }
 
 .workspace-content {
-  padding: 20px 24px 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
 }
 
 @media (max-width: 960px) {
   .workspace-content {
-    padding: 14px 12px 18px;
+    padding: 16px 12px 20px;
   }
 }
 </style>

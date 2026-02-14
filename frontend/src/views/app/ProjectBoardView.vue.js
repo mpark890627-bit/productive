@@ -253,8 +253,6 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
-/** @type {__VLS_StyleScopedClasses['board-header']} */ ;
-/** @type {__VLS_StyleScopedClasses['board-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['column-head']} */ ;
 /** @type {__VLS_StyleScopedClasses['column-body']} */ ;
 /** @type {__VLS_StyleScopedClasses['kanban-grid']} */ ;
@@ -262,25 +260,29 @@ let __VLS_directives;
 // CSS variable injection 
 // CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "board-view" },
+    ...{ class: "board-view app-page" },
 });
 const __VLS_0 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
-    ...{ class: "board-header" },
+    ...{ class: "board-header section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_2 = __VLS_1({
-    ...{ class: "board-header" },
+    ...{ class: "board-header section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 __VLS_3.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
-__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({});
-__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
+    ...{ class: "page-title" },
+});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
+    ...{ class: "page-subtitle" },
+});
 (__VLS_ctx.projectName);
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "header-actions" },
@@ -382,15 +384,15 @@ if (__VLS_ctx.loading) {
         // @ts-ignore
         const __VLS_33 = __VLS_asFunctionalComponent(__VLS_32, new __VLS_32({
             key: (status),
-            ...{ class: "column" },
+            ...{ class: "column section-card" },
             rounded: "lg",
-            elevation: "1",
+            elevation: "0",
         }));
         const __VLS_34 = __VLS_33({
             key: (status),
-            ...{ class: "column" },
+            ...{ class: "column section-card" },
             rounded: "lg",
-            elevation: "1",
+            elevation: "0",
         }, ...__VLS_functionalComponentArgsRest(__VLS_33));
         __VLS_35.slots.default;
         const __VLS_36 = {}.VSkeletonLoader;
@@ -415,15 +417,15 @@ else {
         // @ts-ignore
         const __VLS_41 = __VLS_asFunctionalComponent(__VLS_40, new __VLS_40({
             key: (status),
-            ...{ class: "column" },
+            ...{ class: "column section-card" },
             rounded: "lg",
-            elevation: "1",
+            elevation: "0",
         }));
         const __VLS_42 = __VLS_41({
             key: (status),
-            ...{ class: "column" },
+            ...{ class: "column section-card" },
             rounded: "lg",
-            elevation: "1",
+            elevation: "0",
         }, ...__VLS_functionalComponentArgsRest(__VLS_41));
         __VLS_43.slots.default;
         __VLS_asFunctionalElement(__VLS_intrinsicElements.header, __VLS_intrinsicElements.header)({
@@ -636,12 +638,18 @@ __VLS_92.slots.default;
 (__VLS_ctx.toast.message);
 var __VLS_92;
 /** @type {__VLS_StyleScopedClasses['board-view']} */ ;
+/** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['board-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-subtitle']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['kanban-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['column']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['kanban-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['column']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['column-head']} */ ;
 /** @type {__VLS_StyleScopedClasses['column-body']} */ ;
 var __VLS_dollars;

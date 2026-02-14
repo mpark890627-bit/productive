@@ -1,6 +1,6 @@
 <template>
-  <v-card class="skeleton-wrap" rounded="lg" elevation="1">
-    <v-skeleton-loader type="heading, table-row-divider@4" />
+  <v-card class="skeleton-wrap section-card" rounded="lg" elevation="0">
+    <v-skeleton-loader type="heading, paragraph, table-row-divider@4" />
   </v-card>
 </template>
 
@@ -8,6 +8,7 @@
 
 <style scoped>
 .skeleton-wrap {
-  border: 1px solid rgba(var(--v-theme-outline), 0.18);
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
+  padding: 14px;
 }
 </style>

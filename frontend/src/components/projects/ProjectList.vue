@@ -3,7 +3,7 @@
     :headers="headers"
     :items="projects"
     item-value="id"
-    class="project-table"
+    class="project-table section-card"
     density="comfortable"
     hover
     hide-default-footer
@@ -78,19 +78,30 @@ const formatDate = (dateTime: string) => new Date(dateTime).toLocaleString()
 <style scoped>
 .project-table {
   border: 1px solid rgba(var(--v-theme-outline), 0.2);
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
+}
+
+.project-table :deep(thead th) {
+  background: rgba(var(--v-theme-surface-variant), 0.62);
+  font-weight: 600;
+  color: #425166;
+}
+
+.project-table :deep(tbody tr:hover) {
+  background: rgba(var(--v-theme-primary), 0.04);
 }
 
 .name-link {
   border: 0;
   background: transparent;
-  padding: 0;
+  padding: 2px 0;
   cursor: pointer;
   color: rgb(var(--v-theme-primary));
   text-align: left;
   font: inherit;
   max-width: 240px;
+  font-weight: 600;
 }
 
 .name-link:hover {

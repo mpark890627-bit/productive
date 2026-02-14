@@ -14,12 +14,12 @@ const __VLS_0 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
-    ...{ class: "empty" },
+    ...{ class: "empty section-card" },
     rounded: "lg",
     elevation: "0",
 }));
 const __VLS_2 = __VLS_1({
-    ...{ class: "empty" },
+    ...{ class: "empty section-card" },
     rounded: "lg",
     elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
@@ -46,6 +46,7 @@ __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)(
 var __VLS_9 = {};
 var __VLS_3;
 /** @type {__VLS_StyleScopedClasses['empty']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 // @ts-ignore
 var __VLS_10 = __VLS_9;
 var __VLS_dollars;

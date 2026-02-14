@@ -34,15 +34,15 @@ const __VLS_0 = {}.VCard;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
     ...{ 'onClick': {} },
-    ...{ class: "task-card" },
+    ...{ class: "task-card section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_2 = __VLS_1({
     ...{ 'onClick': {} },
-    ...{ class: "task-card" },
+    ...{ class: "task-card section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 let __VLS_4;
 let __VLS_5;
@@ -66,12 +66,10 @@ const __VLS_9 = {}.VChip;
 /** @type {[typeof __VLS_components.VChip, typeof __VLS_components.vChip, typeof __VLS_components.VChip, typeof __VLS_components.vChip, ]} */ ;
 // @ts-ignore
 const __VLS_10 = __VLS_asFunctionalComponent(__VLS_9, new __VLS_9({
-    size: "x-small",
     color: (__VLS_ctx.priorityColor),
     variant: "tonal",
 }));
 const __VLS_11 = __VLS_10({
-    size: "x-small",
     color: (__VLS_ctx.priorityColor),
     variant: "tonal",
 }, ...__VLS_functionalComponentArgsRest(__VLS_10));
@@ -89,12 +87,10 @@ const __VLS_13 = {}.VChip;
 /** @type {[typeof __VLS_components.VChip, typeof __VLS_components.vChip, typeof __VLS_components.VChip, typeof __VLS_components.vChip, ]} */ ;
 // @ts-ignore
 const __VLS_14 = __VLS_asFunctionalComponent(__VLS_13, new __VLS_13({
-    size: "x-small",
     variant: "outlined",
     prependIcon: "mdi-calendar-month-outline",
 }));
 const __VLS_15 = __VLS_14({
-    size: "x-small",
     variant: "outlined",
     prependIcon: "mdi-calendar-month-outline",
 }, ...__VLS_functionalComponentArgsRest(__VLS_14));
@@ -135,6 +131,7 @@ const __VLS_24 = {
 var __VLS_20;
 var __VLS_3;
 /** @type {__VLS_StyleScopedClasses['task-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['head-row']} */ ;
 /** @type {__VLS_StyleScopedClasses['title']} */ ;
 /** @type {__VLS_StyleScopedClasses['desc']} */ ;

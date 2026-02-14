@@ -64,14 +64,16 @@ const emit = defineEmits<{
 <style scoped>
 .sidebar {
   border-right-color: rgba(var(--v-theme-outline), 0.2);
+  background: linear-gradient(180deg, rgba(var(--v-theme-surface), 0.94), rgba(var(--v-theme-surface-variant), 0.78));
 }
 
 .sidebar-head {
-  min-height: 72px;
-  padding: 12px 14px;
+  min-height: 80px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(var(--v-theme-outline), 0.16);
 }
 
 .sidebar-head.compact {
@@ -86,18 +88,20 @@ const emit = defineEmits<{
 .eyebrow {
   display: inline-block;
   font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #64748b;
+  color: #5f6f86;
+  font-weight: 600;
 }
 
 .logo {
   margin: 4px 0 0;
-  font-size: 18px;
-  letter-spacing: 0.03em;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  font-weight: 700;
 }
 
 .menu-list {
-  padding: 4px 10px;
+  padding: 10px 10px;
 }
 </style>

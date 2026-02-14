@@ -30,7 +30,10 @@
       <section class="contacts-section">
         <header class="contacts-header">
           <h3>담당자 연락처</h3>
-          <button type="button" class="ghost" @click="loadContacts">새로고침</button>
+          <div class="contacts-header-actions">
+            <button type="button" class="ghost" @click="loadContacts">새로고침</button>
+            <button type="button" class="primary" @click="openCreateModal">새 담당자</button>
+          </div>
         </header>
 
         <p v-if="contactsLoading" class="muted">연락처를 불러오는 중...</p>
@@ -70,8 +73,24 @@
                 <td>{{ contact.phone || '-' }}</td>
                 <td>{{ contact.memo || '-' }}</td>
                 <td class="actions">
-                  <button type="button" @click="startEdit(contact.id)">수정</button>
-                  <button type="button" class="danger" @click="removeContact(contact.id)">삭제</button>
+                  <button
+                    type="button"
+                    class="icon-btn"
+                    title="수정"
+                    aria-label="연락처 수정"
+                    @click="startEdit(contact.id)"
+                  >
+                    <i class="mdi mdi-pencil-outline" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-btn danger"
+                    title="삭제"
+                    aria-label="연락처 삭제"
+                    @click="removeContact(contact.id)"
+                  >
+                    <i class="mdi mdi-trash-can-outline" aria-hidden="true" />
+                  </button>
                 </td>
               </template>
             </tr>
@@ -79,20 +98,36 @@
         </table>
 
         <p v-else class="muted">등록된 담당자 연락처가 없습니다.</p>
-
-        <form class="create-form" @submit.prevent="submitCreate">
-          <h4>새 연락처 추가</h4>
-          <div class="form-grid">
-            <input v-model="createForm.name" placeholder="이름 *" required maxlength="120" />
-            <input v-model="createForm.role" placeholder="역할" maxlength="120" />
-            <input v-model="createForm.email" type="email" placeholder="email@company.com" maxlength="255" />
-            <input v-model="createForm.phone" placeholder="전화번호" maxlength="50" />
-            <input v-model="createForm.memo" placeholder="메모" maxlength="2000" />
-          </div>
-          <p v-if="createErrorMessage" class="error">{{ createErrorMessage }}</p>
-          <button type="submit" class="primary" :disabled="createSubmitting">추가</button>
-        </form>
       </section>
+
+      <v-dialog v-model="createDialogOpen" max-width="680">
+        <v-card>
+          <v-card-title class="pt-5 px-5">새 담당자 추가</v-card-title>
+          <v-card-text class="px-5">
+            <form class="create-form-modal" @submit.prevent="submitCreate">
+              <div class="form-grid">
+                <input v-model="createForm.name" placeholder="이름 *" required maxlength="120" :disabled="createSubmitting" />
+                <input v-model="createForm.role" placeholder="역할" maxlength="120" :disabled="createSubmitting" />
+                <input
+                  v-model="createForm.email"
+                  type="email"
+                  placeholder="email@company.com"
+                  maxlength="255"
+                  :disabled="createSubmitting"
+                />
+                <input v-model="createForm.phone" placeholder="전화번호" maxlength="50" :disabled="createSubmitting" />
+                <input v-model="createForm.memo" placeholder="메모" maxlength="2000" :disabled="createSubmitting" />
+              </div>
+              <p v-if="createErrorMessage" class="error">{{ createErrorMessage }}</p>
+            </form>
+          </v-card-text>
+          <v-card-actions class="px-5 pb-5">
+            <v-spacer />
+            <v-btn variant="text" :disabled="createSubmitting" @click="closeCreateModal">취소</v-btn>
+            <v-btn color="primary" :loading="createSubmitting" :disabled="createSubmitting" @click="submitCreate">추가</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </template>
   </section>
 </template>
@@ -123,6 +158,7 @@ const contactsLoading = ref(false)
 const contactsErrorMessage = ref('')
 const createSubmitting = ref(false)
 const createErrorMessage = ref('')
+const createDialogOpen = ref(false)
 const editingId = ref<string | null>(null)
 const editingSubmit = ref(false)
 
@@ -181,6 +217,19 @@ const resetCreateForm = () => {
   createForm.memo = ''
 }
 
+const openCreateModal = () => {
+  createErrorMessage.value = ''
+  resetCreateForm()
+  createDialogOpen.value = true
+}
+
+const closeCreateModal = () => {
+  if (createSubmitting.value) {
+    return
+  }
+  createDialogOpen.value = false
+}
+
 const submitCreate = async () => {
   try {
     createSubmitting.value = true
@@ -196,6 +245,7 @@ const submitCreate = async () => {
 
     contacts.value = [created, ...contacts.value]
     resetCreateForm()
+    createDialogOpen.value = false
   } catch (error) {
     createErrorMessage.value = extractErrorMessage(error, '연락처 추가에 실패했습니다.')
   } finally {
@@ -348,6 +398,12 @@ button.danger {
   justify-content: space-between;
 }
 
+.contacts-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .contacts-table {
   width: 100%;
   border-collapse: collapse;
@@ -365,16 +421,26 @@ button.danger {
 .actions {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
-.create-form {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
 }
 
-.create-form h4 {
-  margin: 0 0 12px;
+.icon-btn .mdi {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.create-form-modal {
+  margin: 0;
 }
 
 .form-grid {

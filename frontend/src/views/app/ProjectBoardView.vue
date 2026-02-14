@@ -1,9 +1,9 @@
 <template>
-  <section class="board-view">
-    <v-card class="board-header" rounded="lg" elevation="1">
+  <section class="board-view app-page">
+    <v-card class="board-header section-card" rounded="lg" elevation="0">
       <div>
-        <h2>Project Board</h2>
-        <p>{{ projectName }}</p>
+        <h2 class="page-title">Project Board</h2>
+        <p class="page-subtitle">{{ projectName }}</p>
       </div>
       <div class="header-actions">
         <v-btn color="primary" prepend-icon="mdi-plus" @click="taskCreateModalOpen = true">새 태스크</v-btn>
@@ -16,13 +16,13 @@
     <v-alert v-if="errorMessage" type="error" variant="tonal">{{ errorMessage }}</v-alert>
 
     <section v-if="loading" class="kanban-grid">
-      <v-card v-for="status in statuses" :key="status" class="column" rounded="lg" elevation="1">
+      <v-card v-for="status in statuses" :key="status" class="column section-card" rounded="lg" elevation="0">
         <v-skeleton-loader type="heading, article@3" />
       </v-card>
     </section>
 
     <section v-else class="kanban-grid">
-      <v-card v-for="status in statuses" :key="status" class="column" rounded="lg" elevation="1">
+      <v-card v-for="status in statuses" :key="status" class="column section-card" rounded="lg" elevation="0">
         <header class="column-head">
           <h3>{{ statusLabels[status] }}</h3>
           <v-chip :color="statusColors[status]" variant="tonal" size="small">{{ columns[status].length }}</v-chip>
@@ -377,41 +377,33 @@ void loadBoard()
 <style scoped>
 .board-view {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
 .board-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-}
-
-.board-header h2 {
-  margin: 0;
-}
-
-.board-header p {
-  margin: 4px 0 0;
-  color: #64748b;
+  gap: 16px;
+  padding: 16px 18px;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .kanban-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(220px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .column {
   min-height: 460px;
-  padding: 12px;
+  padding: 14px;
   display: grid;
   grid-template-rows: auto 1fr;
 }
@@ -420,29 +412,32 @@ void loadBoard()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .column-head h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 700;
   letter-spacing: 0.02em;
+  color: #4a5a71;
 }
 
 .column-body {
   min-height: 320px;
   display: grid;
-  gap: 10px;
+  gap: 12px;
   align-content: start;
   border-radius: 12px;
-  border: 1px dashed rgba(var(--v-theme-outline), 0.15);
-  padding: 8px;
+  border: 1px dashed rgba(var(--v-theme-outline), 0.24);
+  background: rgba(var(--v-theme-surface-variant), 0.2);
+  padding: 10px;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .column-body.drop-active {
   border-color: rgba(var(--v-theme-primary), 0.55);
-  background: rgba(var(--v-theme-primary), 0.06);
+  background: rgba(var(--v-theme-primary), 0.09);
 }
 
 @media (max-width: 1024px) {

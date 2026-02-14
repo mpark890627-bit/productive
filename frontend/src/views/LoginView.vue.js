@@ -40,16 +40,18 @@ const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['brand-head']} */ ;
+/** @type {__VLS_StyleScopedClasses['auth-content']} */ ;
+/** @type {__VLS_StyleScopedClasses['brand-head']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
 const __VLS_0 = {}.VCardText;
 /** @type {[typeof __VLS_components.VCardText, typeof __VLS_components.vCardText, typeof __VLS_components.VCardText, typeof __VLS_components.vCardText, ]} */ ;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
-    ...{ class: "auth-content" },
+    ...{ class: "auth-content app-page" },
 }));
 const __VLS_2 = __VLS_1({
-    ...{ class: "auth-content" },
+    ...{ class: "auth-content app-page" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 var __VLS_4 = {};
 __VLS_3.slots.default;
@@ -208,6 +210,7 @@ __VLS_42.slots.default;
 var __VLS_42;
 var __VLS_3;
 /** @type {__VLS_StyleScopedClasses['auth-content']} */ ;
+/** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['brand-head']} */ ;
 /** @type {__VLS_StyleScopedClasses['auth-form']} */ ;
 /** @type {__VLS_StyleScopedClasses['mt-4']} */ ;

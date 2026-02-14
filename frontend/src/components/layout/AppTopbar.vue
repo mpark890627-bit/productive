@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar flat color="surface" border="b" height="68" class="topbar">
+  <v-app-bar flat color="surface" border="b" height="72" class="topbar">
     <v-btn
       :icon="mobile ? 'mdi-menu' : 'mdi-dock-left'"
       variant="text"
@@ -35,7 +35,7 @@
       <v-btn value="system" icon="mdi-theme-light-dark" />
     </v-btn-toggle>
 
-    <v-btn prepend-icon="mdi-logout" @click="onLogout">Logout</v-btn>
+    <v-btn prepend-icon="mdi-logout" variant="outlined" @click="onLogout">Logout</v-btn>
   </v-app-bar>
 </template>
 
@@ -83,26 +83,31 @@ const onLogout = () => {
 <style scoped>
 .topbar {
   border-bottom-color: rgba(var(--v-theme-outline), 0.2);
-  padding-inline: 8px;
+  padding-inline: 12px;
+  backdrop-filter: blur(6px);
 }
 
 .title-wrap {
-  min-width: 180px;
-  margin-inline: 6px 10px;
+  min-width: 220px;
+  margin-inline: 8px 12px;
 }
 
 .title-wrap h1 {
   margin: 0;
-  font-size: 18px;
-  letter-spacing: 0.01em;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .search-field {
-  margin-right: 4px;
+  max-width: 360px;
+  margin-right: 8px;
 }
 
 .theme-toggle {
-  margin-inline: 4px;
+  margin-inline: 8px;
+  border: 1px solid rgba(var(--v-theme-outline), 0.22);
+  border-radius: 10px;
 }
 
 @media (max-width: 960px) {

@@ -36,14 +36,14 @@ const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
     flat: true,
     color: "surface",
     border: "b",
-    height: "68",
+    height: "72",
     ...{ class: "topbar" },
 }));
 const __VLS_2 = __VLS_1({
     flat: true,
     color: "surface",
     border: "b",
-    height: "68",
+    height: "72",
     ...{ class: "topbar" },
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 var __VLS_4 = {};
@@ -175,10 +175,12 @@ const __VLS_41 = {}.VBtn;
 const __VLS_42 = __VLS_asFunctionalComponent(__VLS_41, new __VLS_41({
     ...{ 'onClick': {} },
     prependIcon: "mdi-logout",
+    variant: "outlined",
 }));
 const __VLS_43 = __VLS_42({
     ...{ 'onClick': {} },
     prependIcon: "mdi-logout",
+    variant: "outlined",
 }, ...__VLS_functionalComponentArgsRest(__VLS_42));
 let __VLS_45;
 let __VLS_46;
