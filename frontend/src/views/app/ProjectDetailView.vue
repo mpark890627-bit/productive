@@ -1,0 +1,414 @@
+<template>
+  <section class="card detail">
+    <p v-if="loading">Loading project...</p>
+    <p v-else-if="errorMessage" class="error">{{ errorMessage }}</p>
+
+    <template v-else-if="project">
+      <header class="detail-header">
+        <div>
+          <h2>{{ project.name }}</h2>
+          <p>{{ project.description || '설명이 없습니다.' }}</p>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="primary" @click="goBoard">태스크 칸반으로 이동</button>
+          <button type="button" class="ghost" @click="goRisks">리스크 관리</button>
+          <button type="button" class="ghost" @click="goTemplates">템플릿 적용</button>
+        </div>
+      </header>
+
+      <dl class="meta">
+        <div>
+          <dt>생성일</dt>
+          <dd>{{ formatDate(project.createdAt) }}</dd>
+        </div>
+        <div>
+          <dt>수정일</dt>
+          <dd>{{ formatDate(project.updatedAt) }}</dd>
+        </div>
+      </dl>
+
+      <section class="contacts-section">
+        <header class="contacts-header">
+          <h3>담당자 연락처</h3>
+          <button type="button" class="ghost" @click="loadContacts">새로고침</button>
+        </header>
+
+        <p v-if="contactsLoading" class="muted">연락처를 불러오는 중...</p>
+        <p v-else-if="contactsErrorMessage" class="error">{{ contactsErrorMessage }}</p>
+
+        <table v-else-if="contacts.length" class="contacts-table">
+          <thead>
+            <tr>
+              <th>이름</th>
+              <th>역할</th>
+              <th>이메일</th>
+              <th>전화번호</th>
+              <th>메모</th>
+              <th>작업</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="contact in contacts" :key="contact.id">
+              <template v-if="editingId === contact.id">
+                <td><input v-model="editForm.name" placeholder="이름" /></td>
+                <td><input v-model="editForm.role" placeholder="역할" /></td>
+                <td><input v-model="editForm.email" placeholder="email@company.com" /></td>
+                <td><input v-model="editForm.phone" placeholder="010-0000-0000" /></td>
+                <td><input v-model="editForm.memo" placeholder="메모" /></td>
+                <td class="actions">
+                  <button type="button" class="primary" :disabled="editingSubmit" @click="submitEdit(contact.id)">
+                    저장
+                  </button>
+                  <button type="button" :disabled="editingSubmit" @click="cancelEdit">취소</button>
+                </td>
+              </template>
+
+              <template v-else>
+                <td>{{ contact.name }}</td>
+                <td>{{ contact.role || '-' }}</td>
+                <td>{{ contact.email || '-' }}</td>
+                <td>{{ contact.phone || '-' }}</td>
+                <td>{{ contact.memo || '-' }}</td>
+                <td class="actions">
+                  <button type="button" @click="startEdit(contact.id)">수정</button>
+                  <button type="button" class="danger" @click="removeContact(contact.id)">삭제</button>
+                </td>
+              </template>
+            </tr>
+          </tbody>
+        </table>
+
+        <p v-else class="muted">등록된 담당자 연락처가 없습니다.</p>
+
+        <form class="create-form" @submit.prevent="submitCreate">
+          <h4>새 연락처 추가</h4>
+          <div class="form-grid">
+            <input v-model="createForm.name" placeholder="이름 *" required maxlength="120" />
+            <input v-model="createForm.role" placeholder="역할" maxlength="120" />
+            <input v-model="createForm.email" type="email" placeholder="email@company.com" maxlength="255" />
+            <input v-model="createForm.phone" placeholder="전화번호" maxlength="50" />
+            <input v-model="createForm.memo" placeholder="메모" maxlength="2000" />
+          </div>
+          <p v-if="createErrorMessage" class="error">{{ createErrorMessage }}</p>
+          <button type="submit" class="primary" :disabled="createSubmitting">추가</button>
+        </form>
+      </section>
+    </template>
+  </section>
+</template>
+
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { extractErrorMessage } from '../../api/apiClient'
+import {
+  createProjectContact,
+  deleteProjectContact,
+  getProjectContacts,
+  updateProjectContact,
+} from '../../api/projectContacts'
+import { getProjectById } from '../../api/projects'
+import type { ProjectItem } from '../../types/project'
+import type { ProjectContactItem } from '../../types/projectContact'
+
+const route = useRoute()
+const router = useRouter()
+
+const project = ref<ProjectItem | null>(null)
+const loading = ref(false)
+const errorMessage = ref('')
+
+const contacts = ref<ProjectContactItem[]>([])
+const contactsLoading = ref(false)
+const contactsErrorMessage = ref('')
+const createSubmitting = ref(false)
+const createErrorMessage = ref('')
+const editingId = ref<string | null>(null)
+const editingSubmit = ref(false)
+
+const createForm = reactive({
+  name: '',
+  role: '',
+  email: '',
+  phone: '',
+  memo: '',
+})
+
+const editForm = reactive({
+  name: '',
+  role: '',
+  email: '',
+  phone: '',
+  memo: '',
+})
+
+const projectId = route.params.id as string
+
+const optionalValue = (value: string) => {
+  const trimmed = value.trim()
+  return trimmed.length ? trimmed : undefined
+}
+
+const loadProject = async () => {
+  try {
+    loading.value = true
+    errorMessage.value = ''
+    project.value = await getProjectById(projectId)
+  } catch {
+    errorMessage.value = '프로젝트 정보를 불러오지 못했습니다.'
+  } finally {
+    loading.value = false
+  }
+}
+
+const loadContacts = async () => {
+  try {
+    contactsLoading.value = true
+    contactsErrorMessage.value = ''
+    contacts.value = await getProjectContacts(projectId)
+  } catch (error) {
+    contactsErrorMessage.value = extractErrorMessage(error, '담당자 연락처를 불러오지 못했습니다.')
+  } finally {
+    contactsLoading.value = false
+  }
+}
+
+const resetCreateForm = () => {
+  createForm.name = ''
+  createForm.role = ''
+  createForm.email = ''
+  createForm.phone = ''
+  createForm.memo = ''
+}
+
+const submitCreate = async () => {
+  try {
+    createSubmitting.value = true
+    createErrorMessage.value = ''
+
+    const created = await createProjectContact(projectId, {
+      name: createForm.name.trim(),
+      role: optionalValue(createForm.role),
+      email: optionalValue(createForm.email),
+      phone: optionalValue(createForm.phone),
+      memo: optionalValue(createForm.memo),
+    })
+
+    contacts.value = [created, ...contacts.value]
+    resetCreateForm()
+  } catch (error) {
+    createErrorMessage.value = extractErrorMessage(error, '연락처 추가에 실패했습니다.')
+  } finally {
+    createSubmitting.value = false
+  }
+}
+
+const startEdit = (contactId: string) => {
+  const target = contacts.value.find((contact) => contact.id === contactId)
+  if (!target) {
+    return
+  }
+
+  editingId.value = contactId
+  editForm.name = target.name
+  editForm.role = target.role ?? ''
+  editForm.email = target.email ?? ''
+  editForm.phone = target.phone ?? ''
+  editForm.memo = target.memo ?? ''
+}
+
+const cancelEdit = () => {
+  editingId.value = null
+}
+
+const submitEdit = async (contactId: string) => {
+  try {
+    editingSubmit.value = true
+    const updated = await updateProjectContact(projectId, contactId, {
+      name: editForm.name.trim(),
+      role: optionalValue(editForm.role),
+      email: optionalValue(editForm.email),
+      phone: optionalValue(editForm.phone),
+      memo: optionalValue(editForm.memo),
+    })
+
+    contacts.value = contacts.value.map((contact) =>
+      contact.id === contactId ? updated : contact,
+    )
+    editingId.value = null
+  } catch (error) {
+    contactsErrorMessage.value = extractErrorMessage(error, '연락처 수정에 실패했습니다.')
+  } finally {
+    editingSubmit.value = false
+  }
+}
+
+const removeContact = async (contactId: string) => {
+  const ok = window.confirm('이 연락처를 삭제하시겠습니까?')
+  if (!ok) {
+    return
+  }
+
+  try {
+    await deleteProjectContact(projectId, contactId)
+    contacts.value = contacts.value.filter((contact) => contact.id !== contactId)
+  } catch (error) {
+    contactsErrorMessage.value = extractErrorMessage(error, '연락처 삭제에 실패했습니다.')
+  }
+}
+
+const goBoard = () => {
+  router.push(`/app/projects/${projectId}/board`)
+}
+
+const goTemplates = () => {
+  router.push(`/app/projects/${projectId}/templates`)
+}
+
+const goRisks = () => {
+  router.push(`/app/projects/${projectId}/risks`)
+}
+
+const formatDate = (dateTime: string) => new Date(dateTime).toLocaleString()
+
+onMounted(async () => {
+  await loadProject()
+  await loadContacts()
+})
+</script>
+
+<style scoped>
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.detail-header h2 {
+  margin: 0 0 8px;
+}
+
+.detail-header p {
+  margin: 0;
+  color: #475569;
+}
+
+.meta {
+  margin-top: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.meta div {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 8px;
+}
+
+dt {
+  color: #64748b;
+}
+
+dd {
+  margin: 0;
+}
+
+button {
+  border: 1px solid #0f766e;
+  background: #0f766e;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+button.ghost {
+  background: transparent;
+  color: #0f766e;
+}
+
+button.danger {
+  border-color: #dc2626;
+  background: #dc2626;
+}
+
+.contacts-section {
+  margin-top: 28px;
+}
+
+.contacts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.contacts-table th,
+.contacts-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.create-form {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.create-form h4 {
+  margin: 0 0 12px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 10px;
+}
+
+input {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.error {
+  color: #dc2626;
+}
+
+.muted {
+  color: #64748b;
+}
+
+@media (max-width: 900px) {
+  .detail-header {
+    flex-direction: column;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}
+</style>

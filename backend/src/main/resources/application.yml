@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: work-management
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:55432/work_management}
+    username: ${SPRING_DATASOURCE_USERNAME:wm_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:wm_password}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change-me-to-a-long-random-secret-key-2026}
+    access-token-expiration-ms: ${JWT_ACCESS_TOKEN_EXPIRATION_MS:3600000}
+  reminder:
+    due-soon-days: ${APP_REMINDER_DUE_SOON_DAYS:2}
+  scheduler:
+    recurring-fixed-delay-ms: ${APP_SCHEDULER_RECURRING_FIXED_DELAY_MS:60000}
+    reminder-fixed-delay-ms: ${APP_SCHEDULER_REMINDER_FIXED_DELAY_MS:120000}

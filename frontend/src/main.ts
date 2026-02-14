@@ -1,0 +1,19 @@
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import { pinia } from './plugins/pinia'
+import { vuetify } from './plugins/vuetify'
+import { useAuthStore } from './stores/auth'
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
+import './assets/main.css'
+
+const app = createApp(App)
+app.use(pinia)
+app.use(vuetify)
+
+const authStore = useAuthStore(pinia)
+authStore.loadFromStorage()
+
+app.use(router)
+app.mount('#app')
