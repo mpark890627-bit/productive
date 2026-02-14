@@ -47,13 +47,23 @@
             :disabled="formSubmitting"
             density="comfortable"
           />
-          <v-text-field
+          <v-autocomplete
             v-model="form.assigneeUserId"
-            label="담당자 사용자 ID(UUID)"
-            placeholder="비우면 기존값 유지"
+            v-model:search="assigneeSearch"
+            :items="assigneeOptions"
+            item-title="label"
+            item-value="userId"
+            label="담당자"
+            placeholder="이름/이메일로 검색"
+            clearable
+            :loading="assigneeLoading"
             :disabled="formSubmitting"
             density="comfortable"
-          />
+          >
+            <template #item="{ props: itemProps, item }">
+              <v-list-item v-bind="itemProps" :title="item.raw.name" :subtitle="item.raw.email" />
+            </template>
+          </v-autocomplete>
           <v-textarea
             v-model="form.description"
             label="설명"
@@ -157,11 +167,12 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { onUnmounted, reactive, ref, watch } from 'vue'
 import { extractErrorMessage } from '../../api/apiClient'
 import { createTaskComment, deleteComment, getTaskComments } from '../../api/comments'
 import { getTags, createTag } from '../../api/tags'
 import { attachTagToTask, detachTagFromTask, getTaskById, patchTask } from '../../api/tasks'
+import { getProjectUsers } from '../../api/users'
 import { useAuthStore } from '../../stores/auth'
 import type { CommentItem } from '../../types/comment'
 import type { TaskItem, TaskPriority, TaskStatus } from '../../types/task'
@@ -188,6 +199,10 @@ const formSubmitting = ref(false)
 const formErrorMessage = ref('')
 const tagInput = ref('')
 const tagSubmitting = ref(false)
+const assigneeSearch = ref('')
+const assigneeLoading = ref(false)
+const assigneeOptions = ref<Array<{ userId: string; name: string; email: string; label: string }>>([])
+let assigneeSearchTimer: ReturnType<typeof setTimeout> | null = null
 const authStore = useAuthStore()
 
 const form = reactive<{
@@ -196,14 +211,14 @@ const form = reactive<{
   status: TaskStatus
   priority: TaskPriority
   dueDate: string
-  assigneeUserId: string
+  assigneeUserId: string | null
 }>({
   title: '',
   description: '',
   status: 'TODO',
   priority: 'MEDIUM',
   dueDate: '',
-  assigneeUserId: '',
+  assigneeUserId: null,
 })
 
 const statusItems: Array<{ label: string; value: TaskStatus }> = [
@@ -236,7 +251,28 @@ const syncFormFromTask = () => {
   form.status = props.task.status ?? 'TODO'
   form.priority = props.task.priority ?? 'MEDIUM'
   form.dueDate = props.task.dueDate ?? ''
-  form.assigneeUserId = props.task.assigneeUserId ?? ''
+  form.assigneeUserId = props.task.assigneeUserId ?? null
+  assigneeSearch.value = ''
+}
+
+const loadAssigneeOptions = async (keyword = '') => {
+  if (!props.task?.projectId) {
+    return
+  }
+  try {
+    assigneeLoading.value = true
+    const users = await getProjectUsers(props.task.projectId, keyword, 0, 50)
+    assigneeOptions.value = users.map((user) => ({
+      userId: user.userId,
+      name: user.name,
+      email: user.email,
+      label: `${user.name} (${user.email})`,
+    }))
+  } catch (error) {
+    emit('error', extractErrorMessage(error, '담당자 목록을 불러오지 못했습니다.'))
+  } finally {
+    assigneeLoading.value = false
+  }
 }
 
 const loadComments = async () => {
@@ -283,7 +319,7 @@ const saveTask = async () => {
       status: form.status,
       priority: form.priority,
       dueDate: form.dueDate || null,
-      assigneeUserId: form.assigneeUserId.trim() ? form.assigneeUserId.trim() : null,
+      assigneeUserId: form.assigneeUserId,
     })
     emit('updated', updated)
   } catch (error) {
@@ -368,11 +404,34 @@ watch(
     commentErrorMessage.value = ''
     syncFormFromTask()
     if (props.open && props.task?.id) {
-      await loadComments()
+      await Promise.all([loadComments(), loadAssigneeOptions()])
     }
   },
   { immediate: true },
 )
+
+watch(
+  assigneeSearch,
+  (keyword) => {
+    if (!props.open || !props.task?.id) {
+      return
+    }
+    if (assigneeSearchTimer) {
+      clearTimeout(assigneeSearchTimer)
+    }
+    assigneeSearchTimer = setTimeout(() => {
+      void loadAssigneeOptions(keyword)
+    }, 250)
+  },
+)
+
+onUnmounted(() => {
+  if (assigneeSearchTimer) {
+    clearTimeout(assigneeSearchTimer)
+    assigneeSearchTimer = null
+  }
+  assigneeSearch.value = ''
+})
 </script>
 
 <style scoped>

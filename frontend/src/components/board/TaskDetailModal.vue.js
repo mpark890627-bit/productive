@@ -1,8 +1,9 @@
-import { reactive, ref, watch } from 'vue';
+import { onUnmounted, reactive, ref, watch } from 'vue';
 import { extractErrorMessage } from '../../api/apiClient';
 import { createTaskComment, deleteComment, getTaskComments } from '../../api/comments';
 import { getTags, createTag } from '../../api/tags';
 import { attachTagToTask, detachTagFromTask, getTaskById, patchTask } from '../../api/tasks';
+import { getProjectUsers } from '../../api/users';
 import { useAuthStore } from '../../stores/auth';
 const props = defineProps();
 const emit = defineEmits();
@@ -16,6 +17,9 @@ const formSubmitting = ref(false);
 const formErrorMessage = ref('');
 const tagInput = ref('');
 const tagSubmitting = ref(false);
+const assigneeSearch = ref('');
+const assigneeLoading = ref(false);
+const assigneeOptions = ref([]);
 const authStore = useAuthStore();
 const form = reactive({
     title: '',
@@ -23,7 +27,7 @@ const form = reactive({
     status: 'TODO',
     priority: 'MEDIUM',
     dueDate: '',
-    assigneeUserId: '',
+    assigneeUserId: null,
 });
 const statusItems = [
     { label: 'TODO', value: 'TODO' },
@@ -51,7 +55,29 @@ const syncFormFromTask = () => {
     form.status = props.task.status ?? 'TODO';
     form.priority = props.task.priority ?? 'MEDIUM';
     form.dueDate = props.task.dueDate ?? '';
-    form.assigneeUserId = props.task.assigneeUserId ?? '';
+    form.assigneeUserId = props.task.assigneeUserId ?? null;
+    assigneeSearch.value = '';
+};
+const loadAssigneeOptions = async (keyword = '') => {
+    if (!props.task?.projectId) {
+        return;
+    }
+    try {
+        assigneeLoading.value = true;
+        const users = await getProjectUsers(props.task.projectId, keyword, 0, 50);
+        assigneeOptions.value = users.map((user) => ({
+            userId: user.userId,
+            name: user.name,
+            email: user.email,
+            label: `${user.name} (${user.email})`,
+        }));
+    }
+    catch (error) {
+        emit('error', extractErrorMessage(error, '담당자 목록을 불러오지 못했습니다.'));
+    }
+    finally {
+        assigneeLoading.value = false;
+    }
 };
 const loadComments = async () => {
     if (!props.task) {
@@ -96,7 +122,7 @@ const saveTask = async () => {
             status: form.status,
             priority: form.priority,
             dueDate: form.dueDate || null,
-            assigneeUserId: form.assigneeUserId.trim() ? form.assigneeUserId.trim() : null,
+            assigneeUserId: form.assigneeUserId,
         });
         emit('updated', updated);
     }
@@ -182,9 +208,12 @@ watch(() => [props.open, props.task?.id], async () => {
     commentErrorMessage.value = '';
     syncFormFromTask();
     if (props.open && props.task?.id) {
-        await loadComments();
+        await Promise.all([loadComments(), loadAssigneeOptions()]);
     }
 }, { immediate: true });
+onUnmounted(() => {
+    assigneeSearch.value = '';
+});
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
@@ -411,70 +440,101 @@ if (__VLS_ctx.task) {
         disabled: (__VLS_ctx.formSubmitting),
         density: "comfortable",
     }, ...__VLS_functionalComponentArgsRest(__VLS_58));
-    const __VLS_61 = {}.VTextField;
-    /** @type {[typeof __VLS_components.VTextField, typeof __VLS_components.vTextField, ]} */ ;
+    const __VLS_61 = {}.VAutocomplete;
+    /** @type {[typeof __VLS_components.VAutocomplete, typeof __VLS_components.vAutocomplete, typeof __VLS_components.VAutocomplete, typeof __VLS_components.vAutocomplete, ]} */ ;
     // @ts-ignore
     const __VLS_62 = __VLS_asFunctionalComponent(__VLS_61, new __VLS_61({
         modelValue: (__VLS_ctx.form.assigneeUserId),
-        label: "담당자 사용자 ID(UUID)",
-        placeholder: "비우면 기존값 유지",
+        search: (__VLS_ctx.assigneeSearch),
+        items: (__VLS_ctx.assigneeOptions),
+        itemTitle: "label",
+        itemValue: "userId",
+        label: "담당자",
+        placeholder: "이름/이메일로 검색",
+        clearable: true,
+        loading: (__VLS_ctx.assigneeLoading),
         disabled: (__VLS_ctx.formSubmitting),
         density: "comfortable",
     }));
     const __VLS_63 = __VLS_62({
         modelValue: (__VLS_ctx.form.assigneeUserId),
-        label: "담당자 사용자 ID(UUID)",
-        placeholder: "비우면 기존값 유지",
+        search: (__VLS_ctx.assigneeSearch),
+        items: (__VLS_ctx.assigneeOptions),
+        itemTitle: "label",
+        itemValue: "userId",
+        label: "담당자",
+        placeholder: "이름/이메일로 검색",
+        clearable: true,
+        loading: (__VLS_ctx.assigneeLoading),
         disabled: (__VLS_ctx.formSubmitting),
         density: "comfortable",
     }, ...__VLS_functionalComponentArgsRest(__VLS_62));
-    const __VLS_65 = {}.VTextarea;
+    __VLS_64.slots.default;
+    {
+        const { item: __VLS_thisSlot } = __VLS_64.slots;
+        const { props: itemProps, item } = __VLS_getSlotParam(__VLS_thisSlot);
+        const __VLS_65 = {}.VListItem;
+        /** @type {[typeof __VLS_components.VListItem, typeof __VLS_components.vListItem, ]} */ ;
+        // @ts-ignore
+        const __VLS_66 = __VLS_asFunctionalComponent(__VLS_65, new __VLS_65({
+            ...(itemProps),
+            title: (item.raw.name),
+            subtitle: (item.raw.email),
+        }));
+        const __VLS_67 = __VLS_66({
+            ...(itemProps),
+            title: (item.raw.name),
+            subtitle: (item.raw.email),
+        }, ...__VLS_functionalComponentArgsRest(__VLS_66));
+    }
+    var __VLS_64;
+    const __VLS_69 = {}.VTextarea;
     /** @type {[typeof __VLS_components.VTextarea, typeof __VLS_components.vTextarea, ]} */ ;
     // @ts-ignore
-    const __VLS_66 = __VLS_asFunctionalComponent(__VLS_65, new __VLS_65({
-        modelValue: (__VLS_ctx.form.description),
-        label: "설명",
-        rows: "3",
-        autoGrow: true,
-        disabled: (__VLS_ctx.formSubmitting),
-    }));
-    const __VLS_67 = __VLS_66({
-        modelValue: (__VLS_ctx.form.description),
-        label: "설명",
-        rows: "3",
-        autoGrow: true,
-        disabled: (__VLS_ctx.formSubmitting),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_66));
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "form-actions" },
-    });
-    const __VLS_69 = {}.VBtn;
-    /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
-    // @ts-ignore
     const __VLS_70 = __VLS_asFunctionalComponent(__VLS_69, new __VLS_69({
-        type: "submit",
-        color: "primary",
-        loading: (__VLS_ctx.formSubmitting),
+        modelValue: (__VLS_ctx.form.description),
+        label: "설명",
+        rows: "3",
+        autoGrow: true,
         disabled: (__VLS_ctx.formSubmitting),
     }));
     const __VLS_71 = __VLS_70({
+        modelValue: (__VLS_ctx.form.description),
+        label: "설명",
+        rows: "3",
+        autoGrow: true,
+        disabled: (__VLS_ctx.formSubmitting),
+    }, ...__VLS_functionalComponentArgsRest(__VLS_70));
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+        ...{ class: "form-actions" },
+    });
+    const __VLS_73 = {}.VBtn;
+    /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
+    // @ts-ignore
+    const __VLS_74 = __VLS_asFunctionalComponent(__VLS_73, new __VLS_73({
         type: "submit",
         color: "primary",
         loading: (__VLS_ctx.formSubmitting),
         disabled: (__VLS_ctx.formSubmitting),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_70));
-    __VLS_72.slots.default;
-    var __VLS_72;
-    var __VLS_40;
-    const __VLS_73 = {}.VDivider;
-    /** @type {[typeof __VLS_components.VDivider, typeof __VLS_components.vDivider, ]} */ ;
-    // @ts-ignore
-    const __VLS_74 = __VLS_asFunctionalComponent(__VLS_73, new __VLS_73({
-        ...{ class: "my-4" },
     }));
     const __VLS_75 = __VLS_74({
-        ...{ class: "my-4" },
+        type: "submit",
+        color: "primary",
+        loading: (__VLS_ctx.formSubmitting),
+        disabled: (__VLS_ctx.formSubmitting),
     }, ...__VLS_functionalComponentArgsRest(__VLS_74));
+    __VLS_76.slots.default;
+    var __VLS_76;
+    var __VLS_40;
+    const __VLS_77 = {}.VDivider;
+    /** @type {[typeof __VLS_components.VDivider, typeof __VLS_components.vDivider, ]} */ ;
+    // @ts-ignore
+    const __VLS_78 = __VLS_asFunctionalComponent(__VLS_77, new __VLS_77({
+        ...{ class: "my-4" },
+    }));
+    const __VLS_79 = __VLS_78({
+        ...{ class: "my-4" },
+    }, ...__VLS_functionalComponentArgsRest(__VLS_78));
     __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
         ...{ class: "tags-section" },
     });
@@ -482,10 +542,10 @@ if (__VLS_ctx.task) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "tag-controls" },
     });
-    const __VLS_77 = {}.VTextField;
+    const __VLS_81 = {}.VTextField;
     /** @type {[typeof __VLS_components.VTextField, typeof __VLS_components.vTextField, ]} */ ;
     // @ts-ignore
-    const __VLS_78 = __VLS_asFunctionalComponent(__VLS_77, new __VLS_77({
+    const __VLS_82 = __VLS_asFunctionalComponent(__VLS_81, new __VLS_81({
         ...{ 'onKeyup': {} },
         modelValue: (__VLS_ctx.tagInput),
         label: "태그명",
@@ -493,95 +553,95 @@ if (__VLS_ctx.task) {
         hideDetails: true,
         disabled: (__VLS_ctx.tagSubmitting),
     }));
-    const __VLS_79 = __VLS_78({
+    const __VLS_83 = __VLS_82({
         ...{ 'onKeyup': {} },
         modelValue: (__VLS_ctx.tagInput),
         label: "태그명",
         density: "compact",
         hideDetails: true,
         disabled: (__VLS_ctx.tagSubmitting),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_78));
-    let __VLS_81;
-    let __VLS_82;
-    let __VLS_83;
-    const __VLS_84 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_82));
+    let __VLS_85;
+    let __VLS_86;
+    let __VLS_87;
+    const __VLS_88 = {
         onKeyup: (__VLS_ctx.addTag)
     };
-    var __VLS_80;
-    const __VLS_85 = {}.VBtn;
+    var __VLS_84;
+    const __VLS_89 = {}.VBtn;
     /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
     // @ts-ignore
-    const __VLS_86 = __VLS_asFunctionalComponent(__VLS_85, new __VLS_85({
+    const __VLS_90 = __VLS_asFunctionalComponent(__VLS_89, new __VLS_89({
         ...{ 'onClick': {} },
         color: "primary",
         variant: "tonal",
         loading: (__VLS_ctx.tagSubmitting),
         disabled: (__VLS_ctx.tagSubmitting),
     }));
-    const __VLS_87 = __VLS_86({
+    const __VLS_91 = __VLS_90({
         ...{ 'onClick': {} },
         color: "primary",
         variant: "tonal",
         loading: (__VLS_ctx.tagSubmitting),
         disabled: (__VLS_ctx.tagSubmitting),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_86));
-    let __VLS_89;
-    let __VLS_90;
-    let __VLS_91;
-    const __VLS_92 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_90));
+    let __VLS_93;
+    let __VLS_94;
+    let __VLS_95;
+    const __VLS_96 = {
         onClick: (__VLS_ctx.addTag)
     };
-    __VLS_88.slots.default;
-    var __VLS_88;
+    __VLS_92.slots.default;
+    var __VLS_92;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "tag-list" },
     });
     for (const [tag] of __VLS_getVForSourceType((__VLS_ctx.task.tags))) {
-        const __VLS_93 = {}.VChip;
+        const __VLS_97 = {}.VChip;
         /** @type {[typeof __VLS_components.VChip, typeof __VLS_components.vChip, typeof __VLS_components.VChip, typeof __VLS_components.vChip, ]} */ ;
         // @ts-ignore
-        const __VLS_94 = __VLS_asFunctionalComponent(__VLS_93, new __VLS_93({
+        const __VLS_98 = __VLS_asFunctionalComponent(__VLS_97, new __VLS_97({
             ...{ 'onClick:close': {} },
             key: (tag.id),
             size: "small",
             ...{ class: "mr-2 mb-2" },
             closable: true,
         }));
-        const __VLS_95 = __VLS_94({
+        const __VLS_99 = __VLS_98({
             ...{ 'onClick:close': {} },
             key: (tag.id),
             size: "small",
             ...{ class: "mr-2 mb-2" },
             closable: true,
-        }, ...__VLS_functionalComponentArgsRest(__VLS_94));
-        let __VLS_97;
-        let __VLS_98;
-        let __VLS_99;
-        const __VLS_100 = {
+        }, ...__VLS_functionalComponentArgsRest(__VLS_98));
+        let __VLS_101;
+        let __VLS_102;
+        let __VLS_103;
+        const __VLS_104 = {
             'onClick:close': (...[$event]) => {
                 if (!(__VLS_ctx.task))
                     return;
                 __VLS_ctx.removeTag(tag.id);
             }
         };
-        __VLS_96.slots.default;
+        __VLS_100.slots.default;
         (tag.name);
-        var __VLS_96;
+        var __VLS_100;
     }
     if (__VLS_ctx.task.tags.length === 0) {
         __VLS_asFunctionalElement(__VLS_intrinsicElements.span, __VLS_intrinsicElements.span)({
             ...{ class: "muted" },
         });
     }
-    const __VLS_101 = {}.VDivider;
+    const __VLS_105 = {}.VDivider;
     /** @type {[typeof __VLS_components.VDivider, typeof __VLS_components.vDivider, ]} */ ;
     // @ts-ignore
-    const __VLS_102 = __VLS_asFunctionalComponent(__VLS_101, new __VLS_101({
+    const __VLS_106 = __VLS_asFunctionalComponent(__VLS_105, new __VLS_105({
         ...{ class: "my-4" },
     }));
-    const __VLS_103 = __VLS_102({
+    const __VLS_107 = __VLS_106({
         ...{ class: "my-4" },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_102));
+    }, ...__VLS_functionalComponentArgsRest(__VLS_106));
     __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
         ...{ class: "comments" },
     });
@@ -589,95 +649,95 @@ if (__VLS_ctx.task) {
         ...{ class: "comments-head" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.h4, __VLS_intrinsicElements.h4)({});
-    const __VLS_105 = {}.VBtn;
+    const __VLS_109 = {}.VBtn;
     /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
     // @ts-ignore
-    const __VLS_106 = __VLS_asFunctionalComponent(__VLS_105, new __VLS_105({
+    const __VLS_110 = __VLS_asFunctionalComponent(__VLS_109, new __VLS_109({
         ...{ 'onClick': {} },
         size: "small",
         variant: "text",
         prependIcon: "mdi-refresh",
     }));
-    const __VLS_107 = __VLS_106({
+    const __VLS_111 = __VLS_110({
         ...{ 'onClick': {} },
         size: "small",
         variant: "text",
         prependIcon: "mdi-refresh",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_106));
-    let __VLS_109;
-    let __VLS_110;
-    let __VLS_111;
-    const __VLS_112 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_110));
+    let __VLS_113;
+    let __VLS_114;
+    let __VLS_115;
+    const __VLS_116 = {
         onClick: (__VLS_ctx.loadComments)
     };
-    __VLS_108.slots.default;
-    var __VLS_108;
+    __VLS_112.slots.default;
+    var __VLS_112;
     if (__VLS_ctx.loadingComments) {
-        const __VLS_113 = {}.VSkeletonLoader;
+        const __VLS_117 = {}.VSkeletonLoader;
         /** @type {[typeof __VLS_components.VSkeletonLoader, typeof __VLS_components.vSkeletonLoader, ]} */ ;
         // @ts-ignore
-        const __VLS_114 = __VLS_asFunctionalComponent(__VLS_113, new __VLS_113({
-            type: "list-item-three-line@3",
-        }));
-        const __VLS_115 = __VLS_114({
-            type: "list-item-three-line@3",
-        }, ...__VLS_functionalComponentArgsRest(__VLS_114));
-    }
-    else if (__VLS_ctx.comments.length > 0) {
-        const __VLS_117 = {}.VList;
-        /** @type {[typeof __VLS_components.VList, typeof __VLS_components.vList, typeof __VLS_components.VList, typeof __VLS_components.vList, ]} */ ;
-        // @ts-ignore
         const __VLS_118 = __VLS_asFunctionalComponent(__VLS_117, new __VLS_117({
-            lines: "two",
-            ...{ class: "comment-list" },
+            type: "list-item-three-line@3",
         }));
         const __VLS_119 = __VLS_118({
+            type: "list-item-three-line@3",
+        }, ...__VLS_functionalComponentArgsRest(__VLS_118));
+    }
+    else if (__VLS_ctx.comments.length > 0) {
+        const __VLS_121 = {}.VList;
+        /** @type {[typeof __VLS_components.VList, typeof __VLS_components.vList, typeof __VLS_components.VList, typeof __VLS_components.vList, ]} */ ;
+        // @ts-ignore
+        const __VLS_122 = __VLS_asFunctionalComponent(__VLS_121, new __VLS_121({
             lines: "two",
             ...{ class: "comment-list" },
-        }, ...__VLS_functionalComponentArgsRest(__VLS_118));
-        __VLS_120.slots.default;
+        }));
+        const __VLS_123 = __VLS_122({
+            lines: "two",
+            ...{ class: "comment-list" },
+        }, ...__VLS_functionalComponentArgsRest(__VLS_122));
+        __VLS_124.slots.default;
         for (const [comment] of __VLS_getVForSourceType((__VLS_ctx.comments))) {
-            const __VLS_121 = {}.VListItem;
+            const __VLS_125 = {}.VListItem;
             /** @type {[typeof __VLS_components.VListItem, typeof __VLS_components.vListItem, typeof __VLS_components.VListItem, typeof __VLS_components.vListItem, ]} */ ;
             // @ts-ignore
-            const __VLS_122 = __VLS_asFunctionalComponent(__VLS_121, new __VLS_121({
+            const __VLS_126 = __VLS_asFunctionalComponent(__VLS_125, new __VLS_125({
                 key: (comment.id),
                 ...{ class: "comment-item" },
             }));
-            const __VLS_123 = __VLS_122({
+            const __VLS_127 = __VLS_126({
                 key: (comment.id),
                 ...{ class: "comment-item" },
-            }, ...__VLS_functionalComponentArgsRest(__VLS_122));
-            __VLS_124.slots.default;
+            }, ...__VLS_functionalComponentArgsRest(__VLS_126));
+            __VLS_128.slots.default;
             {
-                const { title: __VLS_thisSlot } = __VLS_124.slots;
+                const { title: __VLS_thisSlot } = __VLS_128.slots;
                 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
                     ...{ class: "comment-head" },
                 });
                 __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
                 (comment.authorName || 'Unknown');
                 if (__VLS_ctx.canDeleteComment(comment)) {
-                    const __VLS_125 = {}.VBtn;
+                    const __VLS_129 = {}.VBtn;
                     /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
                     // @ts-ignore
-                    const __VLS_126 = __VLS_asFunctionalComponent(__VLS_125, new __VLS_125({
+                    const __VLS_130 = __VLS_asFunctionalComponent(__VLS_129, new __VLS_129({
                         ...{ 'onClick': {} },
                         size: "x-small",
                         color: "error",
                         variant: "text",
                         loading: (__VLS_ctx.deletingCommentId === comment.id),
                     }));
-                    const __VLS_127 = __VLS_126({
+                    const __VLS_131 = __VLS_130({
                         ...{ 'onClick': {} },
                         size: "x-small",
                         color: "error",
                         variant: "text",
                         loading: (__VLS_ctx.deletingCommentId === comment.id),
-                    }, ...__VLS_functionalComponentArgsRest(__VLS_126));
-                    let __VLS_129;
-                    let __VLS_130;
-                    let __VLS_131;
-                    const __VLS_132 = {
+                    }, ...__VLS_functionalComponentArgsRest(__VLS_130));
+                    let __VLS_133;
+                    let __VLS_134;
+                    let __VLS_135;
+                    const __VLS_136 = {
                         onClick: (...[$event]) => {
                             if (!(__VLS_ctx.task))
                                 return;
@@ -690,12 +750,12 @@ if (__VLS_ctx.task) {
                             __VLS_ctx.removeComment(comment.id);
                         }
                     };
-                    __VLS_128.slots.default;
-                    var __VLS_128;
+                    __VLS_132.slots.default;
+                    var __VLS_132;
                 }
             }
             {
-                const { subtitle: __VLS_thisSlot } = __VLS_124.slots;
+                const { subtitle: __VLS_thisSlot } = __VLS_128.slots;
                 __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
                     ...{ class: "comment-content" },
                 });
@@ -703,83 +763,83 @@ if (__VLS_ctx.task) {
                 __VLS_asFunctionalElement(__VLS_intrinsicElements.small, __VLS_intrinsicElements.small)({});
                 (new Date(comment.createdAt).toLocaleString());
             }
-            var __VLS_124;
+            var __VLS_128;
         }
-        var __VLS_120;
+        var __VLS_124;
     }
     else {
-        const __VLS_133 = {}.VAlert;
+        const __VLS_137 = {}.VAlert;
         /** @type {[typeof __VLS_components.VAlert, typeof __VLS_components.vAlert, typeof __VLS_components.VAlert, typeof __VLS_components.vAlert, ]} */ ;
         // @ts-ignore
-        const __VLS_134 = __VLS_asFunctionalComponent(__VLS_133, new __VLS_133({
+        const __VLS_138 = __VLS_asFunctionalComponent(__VLS_137, new __VLS_137({
             type: "info",
             variant: "tonal",
         }));
-        const __VLS_135 = __VLS_134({
+        const __VLS_139 = __VLS_138({
             type: "info",
             variant: "tonal",
-        }, ...__VLS_functionalComponentArgsRest(__VLS_134));
-        __VLS_136.slots.default;
-        var __VLS_136;
+        }, ...__VLS_functionalComponentArgsRest(__VLS_138));
+        __VLS_140.slots.default;
+        var __VLS_140;
     }
-    const __VLS_137 = {}.VForm;
+    const __VLS_141 = {}.VForm;
     /** @type {[typeof __VLS_components.VForm, typeof __VLS_components.vForm, typeof __VLS_components.VForm, typeof __VLS_components.vForm, ]} */ ;
     // @ts-ignore
-    const __VLS_138 = __VLS_asFunctionalComponent(__VLS_137, new __VLS_137({
+    const __VLS_142 = __VLS_asFunctionalComponent(__VLS_141, new __VLS_141({
         ...{ 'onSubmit': {} },
         ...{ class: "comment-form" },
     }));
-    const __VLS_139 = __VLS_138({
+    const __VLS_143 = __VLS_142({
         ...{ 'onSubmit': {} },
         ...{ class: "comment-form" },
-    }, ...__VLS_functionalComponentArgsRest(__VLS_138));
-    let __VLS_141;
-    let __VLS_142;
-    let __VLS_143;
-    const __VLS_144 = {
+    }, ...__VLS_functionalComponentArgsRest(__VLS_142));
+    let __VLS_145;
+    let __VLS_146;
+    let __VLS_147;
+    const __VLS_148 = {
         onSubmit: (__VLS_ctx.submitComment)
     };
-    __VLS_140.slots.default;
-    const __VLS_145 = {}.VTextarea;
+    __VLS_144.slots.default;
+    const __VLS_149 = {}.VTextarea;
     /** @type {[typeof __VLS_components.VTextarea, typeof __VLS_components.vTextarea, ]} */ ;
     // @ts-ignore
-    const __VLS_146 = __VLS_asFunctionalComponent(__VLS_145, new __VLS_145({
-        modelValue: (__VLS_ctx.commentInput),
-        rows: "3",
-        autoGrow: true,
-        label: "댓글 작성",
-        rules: (__VLS_ctx.commentRules),
-        disabled: (__VLS_ctx.commentSubmitting),
-    }));
-    const __VLS_147 = __VLS_146({
-        modelValue: (__VLS_ctx.commentInput),
-        rows: "3",
-        autoGrow: true,
-        label: "댓글 작성",
-        rules: (__VLS_ctx.commentRules),
-        disabled: (__VLS_ctx.commentSubmitting),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_146));
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "comment-actions" },
-    });
-    const __VLS_149 = {}.VBtn;
-    /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
-    // @ts-ignore
     const __VLS_150 = __VLS_asFunctionalComponent(__VLS_149, new __VLS_149({
-        type: "submit",
-        color: "primary",
-        loading: (__VLS_ctx.commentSubmitting),
+        modelValue: (__VLS_ctx.commentInput),
+        rows: "3",
+        autoGrow: true,
+        label: "댓글 작성",
+        rules: (__VLS_ctx.commentRules),
         disabled: (__VLS_ctx.commentSubmitting),
     }));
     const __VLS_151 = __VLS_150({
+        modelValue: (__VLS_ctx.commentInput),
+        rows: "3",
+        autoGrow: true,
+        label: "댓글 작성",
+        rules: (__VLS_ctx.commentRules),
+        disabled: (__VLS_ctx.commentSubmitting),
+    }, ...__VLS_functionalComponentArgsRest(__VLS_150));
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
+        ...{ class: "comment-actions" },
+    });
+    const __VLS_153 = {}.VBtn;
+    /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
+    // @ts-ignore
+    const __VLS_154 = __VLS_asFunctionalComponent(__VLS_153, new __VLS_153({
         type: "submit",
         color: "primary",
         loading: (__VLS_ctx.commentSubmitting),
         disabled: (__VLS_ctx.commentSubmitting),
-    }, ...__VLS_functionalComponentArgsRest(__VLS_150));
-    __VLS_152.slots.default;
-    var __VLS_152;
-    var __VLS_140;
+    }));
+    const __VLS_155 = __VLS_154({
+        type: "submit",
+        color: "primary",
+        loading: (__VLS_ctx.commentSubmitting),
+        disabled: (__VLS_ctx.commentSubmitting),
+    }, ...__VLS_functionalComponentArgsRest(__VLS_154));
+    __VLS_156.slots.default;
+    var __VLS_156;
+    var __VLS_144;
     var __VLS_28;
     var __VLS_12;
 }
@@ -827,6 +887,9 @@ const __VLS_self = (await import('vue')).defineComponent({
             formErrorMessage: formErrorMessage,
             tagInput: tagInput,
             tagSubmitting: tagSubmitting,
+            assigneeSearch: assigneeSearch,
+            assigneeLoading: assigneeLoading,
+            assigneeOptions: assigneeOptions,
             form: form,
             statusItems: statusItems,
             priorityItems: priorityItems,
