@@ -4,10 +4,12 @@ import { VueDraggable } from 'vue-draggable-plus';
 import { extractErrorMessage } from '../../api/apiClient';
 import { getProjectById } from '../../api/projects';
 import { createTaskInProject, getProjectTasks, getTaskById, patchTask } from '../../api/tasks';
+import AppToast from '../../components/common/AppToast.vue';
 import EmptyState from '../../components/common/EmptyState.vue';
 import KanbanTaskCard from '../../components/board/KanbanTaskCard.vue';
 import TaskCreateModal from '../../components/board/TaskCreateModal.vue';
 import TaskDetailModal from '../../components/board/TaskDetailModal.vue';
+import { useToast } from '../../composables/useToast';
 import { taskStatusColors, taskStatusLabels } from '../../utils/taskVisuals';
 const route = useRoute();
 const projectId = route.params.id;
@@ -32,11 +34,7 @@ const statusUpdatePending = ref(false);
 const isDragging = ref(false);
 const dragOverStatus = ref(null);
 const processedDragTaskIds = ref(new Set());
-const toast = reactive({
-    show: false,
-    message: '',
-    type: 'success',
-});
+const { toast, openToast } = useToast();
 const cloneColumns = (source) => ({
     TODO: source.TODO.map((task) => ({ ...task, tags: [...task.tags] })),
     IN_PROGRESS: source.IN_PROGRESS.map((task) => ({ ...task, tags: [...task.tags] })),
@@ -72,14 +70,7 @@ const loadBoard = async () => {
         loading.value = false;
     }
 };
-const showToast = (message, type = 'success') => {
-    toast.show = false;
-    toast.message = message;
-    toast.type = type;
-    setTimeout(() => {
-        toast.show = true;
-    }, 10);
-};
+const showToast = (message, type = 'success') => openToast(message, type);
 const onDragStart = () => {
     isDragging.value = true;
     dragSnapshot.value = cloneColumns(columns);
@@ -619,24 +610,18 @@ const __VLS_88 = {
     onSubmit: (__VLS_ctx.createTask)
 };
 var __VLS_83;
-const __VLS_89 = {}.VSnackbar;
-/** @type {[typeof __VLS_components.VSnackbar, typeof __VLS_components.vSnackbar, typeof __VLS_components.VSnackbar, typeof __VLS_components.vSnackbar, ]} */ ;
+/** @type {[typeof AppToast, ]} */ ;
 // @ts-ignore
-const __VLS_90 = __VLS_asFunctionalComponent(__VLS_89, new __VLS_89({
-    modelValue: (__VLS_ctx.toast.show),
-    color: (__VLS_ctx.toast.type === 'success' ? 'success' : 'error'),
-    location: "bottom right",
-    timeout: "2400",
+const __VLS_89 = __VLS_asFunctionalComponent(AppToast, new AppToast({
+    show: (__VLS_ctx.toast.show),
+    message: (__VLS_ctx.toast.message),
+    color: (__VLS_ctx.toast.color),
 }));
-const __VLS_91 = __VLS_90({
-    modelValue: (__VLS_ctx.toast.show),
-    color: (__VLS_ctx.toast.type === 'success' ? 'success' : 'error'),
-    location: "bottom right",
-    timeout: "2400",
-}, ...__VLS_functionalComponentArgsRest(__VLS_90));
-__VLS_92.slots.default;
-(__VLS_ctx.toast.message);
-var __VLS_92;
+const __VLS_90 = __VLS_89({
+    show: (__VLS_ctx.toast.show),
+    message: (__VLS_ctx.toast.message),
+    color: (__VLS_ctx.toast.color),
+}, ...__VLS_functionalComponentArgsRest(__VLS_89));
 /** @type {__VLS_StyleScopedClasses['board-view']} */ ;
 /** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['board-header']} */ ;
@@ -657,6 +642,7 @@ const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
             VueDraggable: VueDraggable,
+            AppToast: AppToast,
             EmptyState: EmptyState,
             KanbanTaskCard: KanbanTaskCard,
             TaskCreateModal: TaskCreateModal,

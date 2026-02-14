@@ -10,6 +10,25 @@ export async function getProjectTasks(projectId, params = {}) {
         number: envelope.meta?.page ?? 0,
     };
 }
+export async function listTasksGlobal(params = {}) {
+    const { data } = await apiClient.get('/api/tasks', { params });
+    const envelope = data;
+    return {
+        content: envelope.data,
+        totalElements: envelope.meta?.totalElements ?? envelope.data.length,
+        totalPages: envelope.meta?.totalPages ?? 1,
+        size: envelope.meta?.size ?? envelope.data.length,
+        number: envelope.meta?.page ?? 0,
+    };
+}
+export async function getTasksSummary(projectId) {
+    const { data } = await apiClient.get('/api/tasks/summary', {
+        params: {
+            projectId: projectId || undefined,
+        },
+    });
+    return unwrapData(data);
+}
 export async function createTaskInProject(projectId, payload) {
     const { data } = await apiClient.post(`/api/projects/${projectId}/tasks`, payload);
     return unwrapData(data);

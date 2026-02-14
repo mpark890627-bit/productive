@@ -19,7 +19,7 @@
   min-height: 100vh;
   background:
     radial-gradient(circle at 10% 16%, rgba(37, 99, 235, 0.16), transparent 30%),
-    radial-gradient(circle at 85% 86%, rgba(15, 118, 110, 0.12), transparent 28%),
+    radial-gradient(circle at 85% 86%, rgba(14, 165, 233, 0.1), transparent 28%),
     repeating-linear-gradient(
       135deg,
       rgba(148, 163, 184, 0.08) 0,

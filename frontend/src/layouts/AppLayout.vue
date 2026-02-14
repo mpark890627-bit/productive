@@ -41,6 +41,7 @@ const quickAddOpen = ref(false)
 
 const menuItems: SidebarMenuItem[] = [
   { title: 'Inbox', icon: 'mdi-inbox-arrow-down-outline', to: '/app/inbox', enabled: true },
+  { title: 'Tasks', icon: 'mdi-format-list-checks', to: '/app/tasks', enabled: true },
   { title: 'Projects', icon: 'mdi-view-dashboard-outline', to: '/app/projects', enabled: true },
   { title: 'Calendar', icon: 'mdi-calendar-month-outline', to: '/app/calendar', enabled: true },
   { title: 'Templates', icon: 'mdi-file-document-edit-outline', to: '/app/templates', enabled: true },
@@ -123,7 +124,7 @@ onUnmounted(() => {
 .workspace-main {
   background:
     radial-gradient(circle at 100% -5%, rgba(37, 99, 235, 0.09), transparent 22%),
-    radial-gradient(circle at -5% 100%, rgba(15, 118, 110, 0.06), transparent 24%),
+    radial-gradient(circle at -5% 100%, rgba(14, 165, 233, 0.05), transparent 24%),
     rgba(var(--v-theme-background), 1);
 }
 

@@ -1,9 +1,9 @@
 <template>
-  <section class="risk-register">
-    <v-card class="header-card" rounded="lg" elevation="1">
+  <section class="risk-register app-page">
+    <v-card class="header-card section-card" rounded="lg" elevation="0">
       <div>
-        <h2>Risk Register</h2>
-        <p>{{ projectName }}</p>
+        <h2 class="page-title">Risk Register</h2>
+        <p class="page-subtitle">{{ projectName }}</p>
       </div>
       <div class="header-actions">
         <v-btn variant="outlined" :to="`/app/projects/${projectId}/board`">Board</v-btn>
@@ -12,19 +12,19 @@
     </v-card>
 
     <section class="summary-grid">
-      <v-card rounded="lg" elevation="1">
+      <v-card class="section-card" rounded="lg" elevation="0">
         <v-card-text>
           <p class="summary-title">Open risks</p>
           <h3>{{ openRiskCount }}</h3>
         </v-card-text>
       </v-card>
-      <v-card rounded="lg" elevation="1">
+      <v-card class="section-card" rounded="lg" elevation="0">
         <v-card-text>
           <p class="summary-title">High/Critical risks</p>
           <h3>{{ highCriticalCount }}</h3>
         </v-card-text>
       </v-card>
-      <v-card rounded="lg" elevation="1">
+      <v-card class="section-card" rounded="lg" elevation="0">
         <v-card-text>
           <p class="summary-title">Overdue actions</p>
           <h3>{{ riskStore.summary?.overdueActionsCount ?? 0 }}</h3>
@@ -42,7 +42,7 @@
     <v-alert v-if="riskStore.summaryError" type="warning" variant="tonal">{{ riskStore.summaryError }}</v-alert>
     <v-alert v-if="riskStore.listError" type="error" variant="tonal">{{ riskStore.listError }}</v-alert>
 
-    <v-card rounded="lg" elevation="1">
+    <v-card class="section-card" rounded="lg" elevation="0">
       <v-card-text class="filters">
         <v-select
           v-model="statusModel"
@@ -362,45 +362,39 @@ onMounted(async () => {
 <style scoped>
 .risk-register {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 .header-card {
-  padding: 14px 16px;
+  padding: 16px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-}
-
-.header-card h2 {
-  margin: 0;
-}
-
-.header-card p {
-  margin: 2px 0 0;
-  color: #64748b;
+  gap: 16px;
 }
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .summary-title {
   margin: 0;
   color: #64748b;
+  font-size: 0.9rem;
 }
 
 .summary-grid h3 {
   margin: 8px 0 0;
-  font-size: 28px;
+  font-size: 30px;
+  letter-spacing: -0.02em;
 }
 
 .filters {
@@ -412,6 +406,10 @@ onMounted(async () => {
 
 .risk-table :deep(tbody tr) {
   cursor: pointer;
+}
+
+.risk-table :deep(tbody tr:hover) {
+  background: rgba(37, 99, 235, 0.05);
 }
 
 .title-cell {
@@ -427,6 +425,8 @@ onMounted(async () => {
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
+  color: #64748b;
+  font-size: 0.92rem;
 }
 
 .create-grid {

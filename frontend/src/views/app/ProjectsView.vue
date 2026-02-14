@@ -23,7 +23,7 @@
       </div>
     </header>
 
-    <AppSkeleton v-if="loading" />
+    <SkeletonList v-if="loading" type="table" />
     <v-alert v-else-if="errorMessage" type="error" variant="tonal" class="mt-4">{{ errorMessage }}</v-alert>
     <EmptyState
       v-else-if="projects.length === 0"
@@ -67,45 +67,33 @@
       @submit="handleModalSubmit"
     />
 
-    <v-dialog v-model="deleteDialogOpen" max-width="460">
-      <v-card>
-        <v-card-title class="pt-5 px-5">프로젝트 삭제</v-card-title>
-        <v-card-text class="px-5 pb-2">
-          <p class="delete-text">
-            <strong>{{ projectToDelete?.name }}</strong> 프로젝트를 삭제하시겠습니까?
-          </p>
-          <p class="delete-sub">이 작업은 되돌릴 수 없습니다.</p>
-        </v-card-text>
-        <v-card-actions class="px-5 pb-5">
-          <v-spacer />
-          <v-btn variant="text" :disabled="deleteSubmitting" @click="closeDeleteDialog">취소</v-btn>
-          <v-btn
-            color="error"
-            variant="flat"
-            :loading="deleteSubmitting"
-            :disabled="deleteSubmitting"
-            @click="confirmDelete"
-          >
-            삭제
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <ConfirmDialog
+      :open="deleteDialogOpen"
+      title="프로젝트 삭제"
+      :message="`${projectToDelete?.name ?? ''} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`"
+      confirm-text="삭제"
+      confirm-color="error"
+      :loading="deleteSubmitting"
+      @update:open="deleteDialogOpen = $event"
+      @cancel="closeDeleteDialog"
+      @confirm="confirmDelete"
+    />
 
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" location="bottom right" timeout="2500">
-      {{ snackbar.message }}
-    </v-snackbar>
+    <AppToast v-model:show="toast.show" :message="toast.message" :color="toast.color" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ProjectList from '../../components/projects/ProjectList.vue'
 import ProjectFormModal from '../../components/projects/ProjectFormModal.vue'
-import AppSkeleton from '../../components/common/AppSkeleton.vue'
+import SkeletonList from '../../components/common/SkeletonList.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
+import ConfirmDialog from '../../components/common/ConfirmDialog.vue'
+import AppToast from '../../components/common/AppToast.vue'
 import { createProject, deleteProject, getProjects, updateProject } from '../../api/projects'
+import { useToast } from '../../composables/useToast'
 import type { ProjectItem } from '../../types/project'
 
 const router = useRouter()
@@ -127,11 +115,7 @@ const deleteDialogOpen = ref(false)
 const deleteSubmitting = ref(false)
 const projectToDelete = ref<ProjectItem | null>(null)
 
-const snackbar = reactive({
-  show: false,
-  message: '',
-  color: 'success',
-})
+const { toast, openToast } = useToast()
 
 const filteredProjects = computed(() => {
   const q = keyword.value.trim().toLowerCase()
@@ -145,12 +129,6 @@ const filteredProjects = computed(() => {
     return name.includes(q) || description.includes(q)
   })
 })
-
-const showSnackbar = (message: string, color: 'success' | 'error') => {
-  snackbar.message = message
-  snackbar.color = color
-  snackbar.show = true
-}
 
 const loadProjects = async () => {
   try {
@@ -221,9 +199,9 @@ const confirmDelete = async () => {
     }
     await loadProjects()
     closeDeleteDialog()
-    showSnackbar('프로젝트가 삭제되었습니다.', 'success')
+    openToast('프로젝트가 삭제되었습니다.', 'success')
   } catch {
-    showSnackbar('프로젝트 삭제에 실패했습니다.', 'error')
+    openToast('프로젝트 삭제에 실패했습니다.', 'error')
   } finally {
     deleteSubmitting.value = false
   }
@@ -248,20 +226,20 @@ const handleModalSubmit = async (payload: { name: string; description: string })
     if (modalMode.value === 'create') {
       await createProject({ name: payload.name, description: payload.description })
       page.value = 0
-      showSnackbar('프로젝트가 생성되었습니다.', 'success')
+      openToast('프로젝트가 생성되었습니다.', 'success')
     } else if (selectedProject.value) {
       await updateProject(selectedProject.value.id, {
         name: payload.name,
         description: payload.description,
       })
-      showSnackbar('프로젝트가 수정되었습니다.', 'success')
+      openToast('프로젝트가 수정되었습니다.', 'success')
     }
 
     closeModal()
     await loadProjects()
   } catch {
     modalErrorMessage.value = modalMode.value === 'create' ? '프로젝트 생성 실패' : '프로젝트 수정 실패'
-    showSnackbar(modalErrorMessage.value, 'error')
+    openToast(modalErrorMessage.value, 'error')
   } finally {
     modalSubmitting.value = false
   }
@@ -297,15 +275,6 @@ onMounted(loadProjects)
   gap: 8px;
   color: #5f6f86;
   font-size: 0.92rem;
-}
-
-.delete-text {
-  margin: 0 0 8px;
-}
-
-.delete-sub {
-  margin: 0;
-  color: #64748b;
 }
 
 @media (max-width: 960px) {

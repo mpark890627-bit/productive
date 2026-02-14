@@ -1,10 +1,13 @@
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import ProjectList from '../../components/projects/ProjectList.vue';
 import ProjectFormModal from '../../components/projects/ProjectFormModal.vue';
-import AppSkeleton from '../../components/common/AppSkeleton.vue';
+import SkeletonList from '../../components/common/SkeletonList.vue';
 import EmptyState from '../../components/common/EmptyState.vue';
+import ConfirmDialog from '../../components/common/ConfirmDialog.vue';
+import AppToast from '../../components/common/AppToast.vue';
 import { createProject, deleteProject, getProjects, updateProject } from '../../api/projects';
+import { useToast } from '../../composables/useToast';
 const router = useRouter();
 const projects = ref([]);
 const page = ref(0);
@@ -21,11 +24,7 @@ const selectedProject = ref(null);
 const deleteDialogOpen = ref(false);
 const deleteSubmitting = ref(false);
 const projectToDelete = ref(null);
-const snackbar = reactive({
-    show: false,
-    message: '',
-    color: 'success',
-});
+const { toast, openToast } = useToast();
 const filteredProjects = computed(() => {
     const q = keyword.value.trim().toLowerCase();
     if (!q) {
@@ -37,11 +36,6 @@ const filteredProjects = computed(() => {
         return name.includes(q) || description.includes(q);
     });
 });
-const showSnackbar = (message, color) => {
-    snackbar.message = message;
-    snackbar.color = color;
-    snackbar.show = true;
-};
 const loadProjects = async () => {
     try {
         loading.value = true;
@@ -105,10 +99,10 @@ const confirmDelete = async () => {
         }
         await loadProjects();
         closeDeleteDialog();
-        showSnackbar('프로젝트가 삭제되었습니다.', 'success');
+        openToast('프로젝트가 삭제되었습니다.', 'success');
     }
     catch {
-        showSnackbar('프로젝트 삭제에 실패했습니다.', 'error');
+        openToast('프로젝트 삭제에 실패했습니다.', 'error');
     }
     finally {
         deleteSubmitting.value = false;
@@ -130,21 +124,21 @@ const handleModalSubmit = async (payload) => {
         if (modalMode.value === 'create') {
             await createProject({ name: payload.name, description: payload.description });
             page.value = 0;
-            showSnackbar('프로젝트가 생성되었습니다.', 'success');
+            openToast('프로젝트가 생성되었습니다.', 'success');
         }
         else if (selectedProject.value) {
             await updateProject(selectedProject.value.id, {
                 name: payload.name,
                 description: payload.description,
             });
-            showSnackbar('프로젝트가 수정되었습니다.', 'success');
+            openToast('프로젝트가 수정되었습니다.', 'success');
         }
         closeModal();
         await loadProjects();
     }
     catch {
         modalErrorMessage.value = modalMode.value === 'create' ? '프로젝트 생성 실패' : '프로젝트 수정 실패';
-        showSnackbar(modalErrorMessage.value, 'error');
+        openToast(modalErrorMessage.value, 'error');
     }
     finally {
         modalSubmitting.value = false;
@@ -240,10 +234,14 @@ const __VLS_19 = {
 __VLS_15.slots.default;
 var __VLS_15;
 if (__VLS_ctx.loading) {
-    /** @type {[typeof AppSkeleton, ]} */ ;
+    /** @type {[typeof SkeletonList, ]} */ ;
     // @ts-ignore
-    const __VLS_20 = __VLS_asFunctionalComponent(AppSkeleton, new AppSkeleton({}));
-    const __VLS_21 = __VLS_20({}, ...__VLS_functionalComponentArgsRest(__VLS_20));
+    const __VLS_20 = __VLS_asFunctionalComponent(SkeletonList, new SkeletonList({
+        type: "table",
+    }));
+    const __VLS_21 = __VLS_20({
+        type: "table",
+    }, ...__VLS_functionalComponentArgsRest(__VLS_20));
 }
 else if (__VLS_ctx.errorMessage) {
     const __VLS_23 = {}.VAlert;
@@ -427,136 +425,57 @@ const __VLS_73 = {
     onSubmit: (__VLS_ctx.handleModalSubmit)
 };
 var __VLS_68;
-const __VLS_74 = {}.VDialog;
-/** @type {[typeof __VLS_components.VDialog, typeof __VLS_components.vDialog, typeof __VLS_components.VDialog, typeof __VLS_components.vDialog, ]} */ ;
+/** @type {[typeof ConfirmDialog, ]} */ ;
 // @ts-ignore
-const __VLS_75 = __VLS_asFunctionalComponent(__VLS_74, new __VLS_74({
-    modelValue: (__VLS_ctx.deleteDialogOpen),
-    maxWidth: "460",
+const __VLS_74 = __VLS_asFunctionalComponent(ConfirmDialog, new ConfirmDialog({
+    ...{ 'onUpdate:open': {} },
+    ...{ 'onCancel': {} },
+    ...{ 'onConfirm': {} },
+    open: (__VLS_ctx.deleteDialogOpen),
+    title: "프로젝트 삭제",
+    message: (`${__VLS_ctx.projectToDelete?.name ?? ''} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`),
+    confirmText: "삭제",
+    confirmColor: "error",
+    loading: (__VLS_ctx.deleteSubmitting),
 }));
-const __VLS_76 = __VLS_75({
-    modelValue: (__VLS_ctx.deleteDialogOpen),
-    maxWidth: "460",
-}, ...__VLS_functionalComponentArgsRest(__VLS_75));
-__VLS_77.slots.default;
-const __VLS_78 = {}.VCard;
-/** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
+const __VLS_75 = __VLS_74({
+    ...{ 'onUpdate:open': {} },
+    ...{ 'onCancel': {} },
+    ...{ 'onConfirm': {} },
+    open: (__VLS_ctx.deleteDialogOpen),
+    title: "프로젝트 삭제",
+    message: (`${__VLS_ctx.projectToDelete?.name ?? ''} 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`),
+    confirmText: "삭제",
+    confirmColor: "error",
+    loading: (__VLS_ctx.deleteSubmitting),
+}, ...__VLS_functionalComponentArgsRest(__VLS_74));
+let __VLS_77;
+let __VLS_78;
+let __VLS_79;
+const __VLS_80 = {
+    'onUpdate:open': (...[$event]) => {
+        __VLS_ctx.deleteDialogOpen = $event;
+    }
+};
+const __VLS_81 = {
+    onCancel: (__VLS_ctx.closeDeleteDialog)
+};
+const __VLS_82 = {
+    onConfirm: (__VLS_ctx.confirmDelete)
+};
+var __VLS_76;
+/** @type {[typeof AppToast, ]} */ ;
 // @ts-ignore
-const __VLS_79 = __VLS_asFunctionalComponent(__VLS_78, new __VLS_78({}));
-const __VLS_80 = __VLS_79({}, ...__VLS_functionalComponentArgsRest(__VLS_79));
-__VLS_81.slots.default;
-const __VLS_82 = {}.VCardTitle;
-/** @type {[typeof __VLS_components.VCardTitle, typeof __VLS_components.vCardTitle, typeof __VLS_components.VCardTitle, typeof __VLS_components.vCardTitle, ]} */ ;
-// @ts-ignore
-const __VLS_83 = __VLS_asFunctionalComponent(__VLS_82, new __VLS_82({
-    ...{ class: "pt-5 px-5" },
+const __VLS_83 = __VLS_asFunctionalComponent(AppToast, new AppToast({
+    show: (__VLS_ctx.toast.show),
+    message: (__VLS_ctx.toast.message),
+    color: (__VLS_ctx.toast.color),
 }));
 const __VLS_84 = __VLS_83({
-    ...{ class: "pt-5 px-5" },
+    show: (__VLS_ctx.toast.show),
+    message: (__VLS_ctx.toast.message),
+    color: (__VLS_ctx.toast.color),
 }, ...__VLS_functionalComponentArgsRest(__VLS_83));
-__VLS_85.slots.default;
-var __VLS_85;
-const __VLS_86 = {}.VCardText;
-/** @type {[typeof __VLS_components.VCardText, typeof __VLS_components.vCardText, typeof __VLS_components.VCardText, typeof __VLS_components.vCardText, ]} */ ;
-// @ts-ignore
-const __VLS_87 = __VLS_asFunctionalComponent(__VLS_86, new __VLS_86({
-    ...{ class: "px-5 pb-2" },
-}));
-const __VLS_88 = __VLS_87({
-    ...{ class: "px-5 pb-2" },
-}, ...__VLS_functionalComponentArgsRest(__VLS_87));
-__VLS_89.slots.default;
-__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
-    ...{ class: "delete-text" },
-});
-__VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
-(__VLS_ctx.projectToDelete?.name);
-__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
-    ...{ class: "delete-sub" },
-});
-var __VLS_89;
-const __VLS_90 = {}.VCardActions;
-/** @type {[typeof __VLS_components.VCardActions, typeof __VLS_components.vCardActions, typeof __VLS_components.VCardActions, typeof __VLS_components.vCardActions, ]} */ ;
-// @ts-ignore
-const __VLS_91 = __VLS_asFunctionalComponent(__VLS_90, new __VLS_90({
-    ...{ class: "px-5 pb-5" },
-}));
-const __VLS_92 = __VLS_91({
-    ...{ class: "px-5 pb-5" },
-}, ...__VLS_functionalComponentArgsRest(__VLS_91));
-__VLS_93.slots.default;
-const __VLS_94 = {}.VSpacer;
-/** @type {[typeof __VLS_components.VSpacer, typeof __VLS_components.vSpacer, ]} */ ;
-// @ts-ignore
-const __VLS_95 = __VLS_asFunctionalComponent(__VLS_94, new __VLS_94({}));
-const __VLS_96 = __VLS_95({}, ...__VLS_functionalComponentArgsRest(__VLS_95));
-const __VLS_98 = {}.VBtn;
-/** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
-// @ts-ignore
-const __VLS_99 = __VLS_asFunctionalComponent(__VLS_98, new __VLS_98({
-    ...{ 'onClick': {} },
-    variant: "text",
-    disabled: (__VLS_ctx.deleteSubmitting),
-}));
-const __VLS_100 = __VLS_99({
-    ...{ 'onClick': {} },
-    variant: "text",
-    disabled: (__VLS_ctx.deleteSubmitting),
-}, ...__VLS_functionalComponentArgsRest(__VLS_99));
-let __VLS_102;
-let __VLS_103;
-let __VLS_104;
-const __VLS_105 = {
-    onClick: (__VLS_ctx.closeDeleteDialog)
-};
-__VLS_101.slots.default;
-var __VLS_101;
-const __VLS_106 = {}.VBtn;
-/** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
-// @ts-ignore
-const __VLS_107 = __VLS_asFunctionalComponent(__VLS_106, new __VLS_106({
-    ...{ 'onClick': {} },
-    color: "error",
-    variant: "flat",
-    loading: (__VLS_ctx.deleteSubmitting),
-    disabled: (__VLS_ctx.deleteSubmitting),
-}));
-const __VLS_108 = __VLS_107({
-    ...{ 'onClick': {} },
-    color: "error",
-    variant: "flat",
-    loading: (__VLS_ctx.deleteSubmitting),
-    disabled: (__VLS_ctx.deleteSubmitting),
-}, ...__VLS_functionalComponentArgsRest(__VLS_107));
-let __VLS_110;
-let __VLS_111;
-let __VLS_112;
-const __VLS_113 = {
-    onClick: (__VLS_ctx.confirmDelete)
-};
-__VLS_109.slots.default;
-var __VLS_109;
-var __VLS_93;
-var __VLS_81;
-var __VLS_77;
-const __VLS_114 = {}.VSnackbar;
-/** @type {[typeof __VLS_components.VSnackbar, typeof __VLS_components.vSnackbar, typeof __VLS_components.VSnackbar, typeof __VLS_components.vSnackbar, ]} */ ;
-// @ts-ignore
-const __VLS_115 = __VLS_asFunctionalComponent(__VLS_114, new __VLS_114({
-    modelValue: (__VLS_ctx.snackbar.show),
-    color: (__VLS_ctx.snackbar.color),
-    location: "bottom right",
-    timeout: "2500",
-}));
-const __VLS_116 = __VLS_115({
-    modelValue: (__VLS_ctx.snackbar.show),
-    color: (__VLS_ctx.snackbar.color),
-    location: "bottom right",
-    timeout: "2500",
-}, ...__VLS_functionalComponentArgsRest(__VLS_115));
-__VLS_117.slots.default;
-(__VLS_ctx.snackbar.message);
-var __VLS_117;
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['projects-header']} */ ;
@@ -571,22 +490,16 @@ var __VLS_117;
 /** @type {__VLS_StyleScopedClasses['mt-4']} */ ;
 /** @type {__VLS_StyleScopedClasses['mt-4']} */ ;
 /** @type {__VLS_StyleScopedClasses['pager']} */ ;
-/** @type {__VLS_StyleScopedClasses['pt-5']} */ ;
-/** @type {__VLS_StyleScopedClasses['px-5']} */ ;
-/** @type {__VLS_StyleScopedClasses['px-5']} */ ;
-/** @type {__VLS_StyleScopedClasses['pb-2']} */ ;
-/** @type {__VLS_StyleScopedClasses['delete-text']} */ ;
-/** @type {__VLS_StyleScopedClasses['delete-sub']} */ ;
-/** @type {__VLS_StyleScopedClasses['px-5']} */ ;
-/** @type {__VLS_StyleScopedClasses['pb-5']} */ ;
 var __VLS_dollars;
 const __VLS_self = (await import('vue')).defineComponent({
     setup() {
         return {
             ProjectList: ProjectList,
             ProjectFormModal: ProjectFormModal,
-            AppSkeleton: AppSkeleton,
+            SkeletonList: SkeletonList,
             EmptyState: EmptyState,
+            ConfirmDialog: ConfirmDialog,
+            AppToast: AppToast,
             projects: projects,
             page: page,
             totalPages: totalPages,
@@ -601,7 +514,7 @@ const __VLS_self = (await import('vue')).defineComponent({
             deleteDialogOpen: deleteDialogOpen,
             deleteSubmitting: deleteSubmitting,
             projectToDelete: projectToDelete,
-            snackbar: snackbar,
+            toast: toast,
             filteredProjects: filteredProjects,
             loadProjects: loadProjects,
             goPrev: goPrev,

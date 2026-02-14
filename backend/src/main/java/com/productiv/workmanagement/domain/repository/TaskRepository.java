@@ -1,6 +1,7 @@
 package com.productiv.workmanagement.domain.repository;
 
 import com.productiv.workmanagement.domain.entity.Task;
+import com.productiv.workmanagement.domain.entity.enums.TaskPriority;
 import com.productiv.workmanagement.domain.entity.enums.TaskStatus;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -49,6 +50,42 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
 
     @EntityGraph(attributePaths = {"project", "assigneeUser"})
     Optional<Task> findByIdAndProject_OwnerUser_Id(UUID id, UUID ownerUserId);
+
+    @EntityGraph(attributePaths = {"project", "assigneeUser"})
+    @Query("""
+        SELECT t
+        FROM Task t
+        WHERE t.project.ownerUser.id = :ownerUserId
+          AND (:projectFiltering = false OR t.project.id = :projectId)
+          AND (:statusFiltering = false OR t.status = :status)
+          AND (:priorityFiltering = false OR t.priority = :priority)
+          AND (:assigneeFiltering = false OR t.assigneeUser.id = :assigneeUserId)
+          AND (:dueFromFiltering = false OR t.dueDate >= :dueFrom)
+          AND (:dueToFiltering = false OR t.dueDate <= :dueTo)
+          AND (
+            :keywordFiltering = false OR
+            LOWER(t.title) LIKE :keywordPattern OR
+            LOWER(COALESCE(t.description, '')) LIKE :keywordPattern
+          )
+    """)
+    Page<Task> searchOwnedTasks(
+        @Param("ownerUserId") UUID ownerUserId,
+        @Param("projectFiltering") boolean projectFiltering,
+        @Param("projectId") UUID projectId,
+        @Param("statusFiltering") boolean statusFiltering,
+        @Param("status") TaskStatus status,
+        @Param("priorityFiltering") boolean priorityFiltering,
+        @Param("priority") TaskPriority priority,
+        @Param("assigneeFiltering") boolean assigneeFiltering,
+        @Param("assigneeUserId") UUID assigneeUserId,
+        @Param("dueFromFiltering") boolean dueFromFiltering,
+        @Param("dueFrom") LocalDate dueFrom,
+        @Param("dueToFiltering") boolean dueToFiltering,
+        @Param("dueTo") LocalDate dueTo,
+        @Param("keywordFiltering") boolean keywordFiltering,
+        @Param("keywordPattern") String keywordPattern,
+        Pageable pageable
+    );
 
     @EntityGraph(attributePaths = {"project", "assigneeUser"})
     @Query("""
@@ -124,4 +161,64 @@ public interface TaskRepository extends JpaRepository<Task, UUID> {
           AND t.dueDate <= :maxDueDate
     """)
     Page<Task> findDueTasks(@Param("maxDueDate") LocalDate maxDueDate, Pageable pageable);
+
+    @Query("""
+        SELECT COUNT(t)
+        FROM Task t
+        WHERE t.project.ownerUser.id = :ownerUserId
+          AND (:projectFiltering = false OR t.project.id = :projectId)
+    """)
+    long countOwnedTasks(
+        @Param("ownerUserId") UUID ownerUserId,
+        @Param("projectFiltering") boolean projectFiltering,
+        @Param("projectId") UUID projectId
+    );
+
+    @Query("""
+        SELECT COUNT(t)
+        FROM Task t
+        WHERE t.project.ownerUser.id = :ownerUserId
+          AND (:projectFiltering = false OR t.project.id = :projectId)
+          AND t.status = :status
+    """)
+    long countOwnedTasksByStatus(
+        @Param("ownerUserId") UUID ownerUserId,
+        @Param("projectFiltering") boolean projectFiltering,
+        @Param("projectId") UUID projectId,
+        @Param("status") TaskStatus status
+    );
+
+    @Query("""
+        SELECT COUNT(t)
+        FROM Task t
+        WHERE t.project.ownerUser.id = :ownerUserId
+          AND (:projectFiltering = false OR t.project.id = :projectId)
+          AND t.dueDate IS NOT NULL
+          AND t.dueDate >= :today
+          AND t.dueDate <= :dueSoonEnd
+          AND t.status <> com.productiv.workmanagement.domain.entity.enums.TaskStatus.DONE
+    """)
+    long countOwnedDueSoonTasks(
+        @Param("ownerUserId") UUID ownerUserId,
+        @Param("projectFiltering") boolean projectFiltering,
+        @Param("projectId") UUID projectId,
+        @Param("today") LocalDate today,
+        @Param("dueSoonEnd") LocalDate dueSoonEnd
+    );
+
+    @Query("""
+        SELECT COUNT(t)
+        FROM Task t
+        WHERE t.project.ownerUser.id = :ownerUserId
+          AND (:projectFiltering = false OR t.project.id = :projectId)
+          AND t.dueDate IS NOT NULL
+          AND t.dueDate < :today
+          AND t.status <> com.productiv.workmanagement.domain.entity.enums.TaskStatus.DONE
+    """)
+    long countOwnedOverdueTasks(
+        @Param("ownerUserId") UUID ownerUserId,
+        @Param("projectFiltering") boolean projectFiltering,
+        @Param("projectId") UUID projectId,
+        @Param("today") LocalDate today
+    );
 }

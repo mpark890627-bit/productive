@@ -167,9 +167,8 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
-/** @type {__VLS_StyleScopedClasses['detail-header']} */ ;
-/** @type {__VLS_StyleScopedClasses['detail-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['meta']} */ ;
+/** @type {__VLS_StyleScopedClasses['contacts-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['contacts-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['contacts-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['icon-btn']} */ ;
@@ -179,7 +178,7 @@ let __VLS_directives;
 // CSS variable injection 
 // CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "card detail" },
+    ...{ class: "card detail app-page" },
 });
 if (__VLS_ctx.loading) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
@@ -192,12 +191,16 @@ else if (__VLS_ctx.errorMessage) {
 }
 else if (__VLS_ctx.project) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.header, __VLS_intrinsicElements.header)({
-        ...{ class: "detail-header" },
+        ...{ class: "detail-header section-card" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({});
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
+        ...{ class: "page-title" },
+    });
     (__VLS_ctx.project.name);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
+        ...{ class: "page-subtitle" },
+    });
     (__VLS_ctx.project.description || '설명이 없습니다.');
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "header-actions" },
@@ -218,7 +221,7 @@ else if (__VLS_ctx.project) {
         ...{ class: "ghost" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.dl, __VLS_intrinsicElements.dl)({
-        ...{ class: "meta" },
+        ...{ class: "meta section-card" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
     __VLS_asFunctionalElement(__VLS_intrinsicElements.dt, __VLS_intrinsicElements.dt)({});
@@ -229,7 +232,7 @@ else if (__VLS_ctx.project) {
     __VLS_asFunctionalElement(__VLS_intrinsicElements.dd, __VLS_intrinsicElements.dd)({});
     (__VLS_ctx.formatDate(__VLS_ctx.project.updatedAt));
     __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-        ...{ class: "contacts-section" },
+        ...{ class: "contacts-section section-card" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.header, __VLS_intrinsicElements.header)({
         ...{ class: "contacts-header" },
@@ -559,14 +562,20 @@ else if (__VLS_ctx.project) {
 }
 /** @type {__VLS_StyleScopedClasses['card']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail']} */ ;
+/** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['error']} */ ;
 /** @type {__VLS_StyleScopedClasses['detail-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-subtitle']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['primary']} */ ;
 /** @type {__VLS_StyleScopedClasses['ghost']} */ ;
 /** @type {__VLS_StyleScopedClasses['ghost']} */ ;
 /** @type {__VLS_StyleScopedClasses['meta']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['contacts-section']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['contacts-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['contacts-header-actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['ghost']} */ ;

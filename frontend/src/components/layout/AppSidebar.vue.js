@@ -5,6 +5,12 @@ const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['sidebar-head']} */ ;
+/** @type {__VLS_StyleScopedClasses['menu-list']} */ ;
+/** @type {__VLS_StyleScopedClasses['menu-list']} */ ;
+/** @type {__VLS_StyleScopedClasses['v-list-item']} */ ;
+/** @type {__VLS_StyleScopedClasses['menu-list']} */ ;
+/** @type {__VLS_StyleScopedClasses['menu-list']} */ ;
+/** @type {__VLS_StyleScopedClasses['v-list-item--active']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
 const __VLS_0 = {}.VNavigationDrawer;

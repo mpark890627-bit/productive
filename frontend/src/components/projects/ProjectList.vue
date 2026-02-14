@@ -82,6 +82,10 @@ const formatDate = (dateTime: string) => new Date(dateTime).toLocaleString()
   overflow: hidden;
 }
 
+.project-table :deep(.v-table__wrapper) {
+  overflow-x: auto;
+}
+
 .project-table :deep(thead th) {
   background: rgba(var(--v-theme-surface-variant), 0.62);
   font-weight: 600;

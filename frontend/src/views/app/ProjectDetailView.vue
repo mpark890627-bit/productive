@@ -1,13 +1,13 @@
 <template>
-  <section class="card detail">
+  <section class="card detail app-page">
     <p v-if="loading">Loading project...</p>
     <p v-else-if="errorMessage" class="error">{{ errorMessage }}</p>
 
     <template v-else-if="project">
-      <header class="detail-header">
+      <header class="detail-header section-card">
         <div>
-          <h2>{{ project.name }}</h2>
-          <p>{{ project.description || '설명이 없습니다.' }}</p>
+          <h2 class="page-title">{{ project.name }}</h2>
+          <p class="page-subtitle">{{ project.description || '설명이 없습니다.' }}</p>
         </div>
         <div class="header-actions">
           <button type="button" class="primary" @click="goBoard">태스크 칸반으로 이동</button>
@@ -16,7 +16,7 @@
         </div>
       </header>
 
-      <dl class="meta">
+      <dl class="meta section-card">
         <div>
           <dt>생성일</dt>
           <dd>{{ formatDate(project.createdAt) }}</dd>
@@ -27,7 +27,7 @@
         </div>
       </dl>
 
-      <section class="contacts-section">
+      <section class="contacts-section section-card">
         <header class="contacts-header">
           <h3>담당자 연락처</h3>
           <div class="contacts-header-actions">
@@ -333,26 +333,20 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
+  padding: 16px 18px;
 }
 
 .header-actions {
   display: flex;
-  gap: 8px;
-}
-
-.detail-header h2 {
-  margin: 0 0 8px;
-}
-
-.detail-header p {
-  margin: 0;
-  color: #475569;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .meta {
-  margin-top: 20px;
+  margin-top: 0;
   display: grid;
   gap: 10px;
+  padding: 14px 16px;
 }
 
 .meta div {
@@ -370,26 +364,30 @@ dd {
 }
 
 button {
-  border: 1px solid #0f766e;
-  background: #0f766e;
+  border: 1px solid #2563eb;
+  background: #2563eb;
   color: #fff;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 8px 12px;
   cursor: pointer;
+  font-weight: 600;
 }
 
 button.ghost {
-  background: transparent;
-  color: #0f766e;
+  background: #fff;
+  color: #2563eb;
+  border-color: #e6eaf2;
 }
 
 button.danger {
-  border-color: #dc2626;
-  background: #dc2626;
+  border-color: #ef4444;
+  background: #ef4444;
 }
 
 .contacts-section {
-  margin-top: 28px;
+  margin-top: 0;
+  padding: 16px;
+  border: 1px solid #e6eaf2;
 }
 
 .contacts-header {
@@ -413,9 +411,13 @@ button.danger {
 .contacts-table th,
 .contacts-table td {
   padding: 10px 8px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e6eaf2;
   text-align: left;
   vertical-align: top;
+}
+
+.contacts-table tr:hover td {
+  background: rgba(37, 99, 235, 0.04);
 }
 
 .actions {
@@ -451,13 +453,14 @@ button.danger {
 }
 
 input {
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 8px;
+  border: 1px solid #e6eaf2;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
 }
 
 .error {
-  color: #dc2626;
+  color: #ef4444;
 }
 
 .muted {

@@ -1,11 +1,13 @@
 package com.productiv.workmanagement.web.controller;
 
 import com.productiv.workmanagement.common.security.CustomUserPrincipal;
+import com.productiv.workmanagement.domain.entity.enums.TaskPriority;
 import com.productiv.workmanagement.domain.entity.enums.TaskStatus;
 import com.productiv.workmanagement.service.TaskService;
 import com.productiv.workmanagement.web.dto.common.ApiResponse;
 import com.productiv.workmanagement.web.dto.common.PageMeta;
 import com.productiv.workmanagement.web.dto.task.TaskCreateRequest;
+import com.productiv.workmanagement.web.dto.task.TaskListSummaryResponse;
 import com.productiv.workmanagement.web.dto.task.TaskResponse;
 import com.productiv.workmanagement.web.dto.task.TaskUpdateRequest;
 import jakarta.validation.Valid;
@@ -71,6 +73,40 @@ public class TaskController {
             pageable
         );
         return ResponseEntity.ok(ApiResponse.of(page.getContent(), PageMeta.from(page)));
+    }
+
+    @GetMapping("/tasks")
+    public ResponseEntity<ApiResponse<List<TaskResponse>>> getOwnedTasks(
+        @AuthenticationPrincipal CustomUserPrincipal principal,
+        @RequestParam(required = false) UUID projectId,
+        @RequestParam(required = false) TaskStatus status,
+        @RequestParam(required = false) TaskPriority priority,
+        @RequestParam(required = false) UUID assigneeUserId,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueFrom,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueTo,
+        @RequestParam(required = false) String keyword,
+        @PageableDefault(size = 20) Pageable pageable
+    ) {
+        Page<TaskResponse> page = taskService.searchOwnedTasks(
+            principal.getUserId(),
+            projectId,
+            status,
+            priority,
+            assigneeUserId,
+            dueFrom,
+            dueTo,
+            keyword,
+            pageable
+        );
+        return ResponseEntity.ok(ApiResponse.of(page.getContent(), PageMeta.from(page)));
+    }
+
+    @GetMapping("/tasks/summary")
+    public ResponseEntity<ApiResponse<TaskListSummaryResponse>> getOwnedTasksSummary(
+        @AuthenticationPrincipal CustomUserPrincipal principal,
+        @RequestParam(required = false) UUID projectId
+    ) {
+        return ResponseEntity.ok(ApiResponse.of(taskService.getOwnedSummary(principal.getUserId(), projectId)));
     }
 
     @GetMapping("/tasks/{id}")

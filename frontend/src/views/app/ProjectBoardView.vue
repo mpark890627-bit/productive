@@ -76,9 +76,7 @@
       @submit="createTask"
     />
 
-    <v-snackbar v-model="toast.show" :color="toast.type === 'success' ? 'success' : 'error'" location="bottom right" timeout="2400">
-      {{ toast.message }}
-    </v-snackbar>
+    <AppToast v-model:show="toast.show" :message="toast.message" :color="toast.color" />
   </section>
 </template>
 
@@ -89,10 +87,12 @@ import { VueDraggable } from 'vue-draggable-plus'
 import { extractErrorMessage } from '../../api/apiClient'
 import { getProjectById } from '../../api/projects'
 import { createTaskInProject, getProjectTasks, getTaskById, patchTask } from '../../api/tasks'
+import AppToast from '../../components/common/AppToast.vue'
 import EmptyState from '../../components/common/EmptyState.vue'
 import KanbanTaskCard from '../../components/board/KanbanTaskCard.vue'
 import TaskCreateModal from '../../components/board/TaskCreateModal.vue'
 import TaskDetailModal from '../../components/board/TaskDetailModal.vue'
+import { useToast } from '../../composables/useToast'
 import { taskStatusColors, taskStatusLabels } from '../../utils/taskVisuals'
 import type { TaskItem, TaskPriority, TaskStatus } from '../../types/task'
 
@@ -126,11 +126,7 @@ const isDragging = ref(false)
 const dragOverStatus = ref<TaskStatus | null>(null)
 const processedDragTaskIds = ref<Set<string>>(new Set())
 
-const toast = reactive<{ show: boolean; message: string; type: 'success' | 'error' }>({
-  show: false,
-  message: '',
-  type: 'success',
-})
+const { toast, openToast } = useToast()
 
 const cloneColumns = (source: BoardColumns): BoardColumns => ({
   TODO: source.TODO.map((task) => ({ ...task, tags: [...task.tags] })),
@@ -171,14 +167,7 @@ const loadBoard = async () => {
   }
 }
 
-const showToast = (message: string, type: 'success' | 'error' = 'success') => {
-  toast.show = false
-  toast.message = message
-  toast.type = type
-  setTimeout(() => {
-    toast.show = true
-  }, 10)
-}
+const showToast = (message: string, type: 'success' | 'error' = 'success') => openToast(message, type)
 
 const onDragStart = () => {
   isDragging.value = true

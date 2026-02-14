@@ -11,6 +11,7 @@ const rail = ref(false);
 const quickAddOpen = ref(false);
 const menuItems = [
     { title: 'Inbox', icon: 'mdi-inbox-arrow-down-outline', to: '/app/inbox', enabled: true },
+    { title: 'Tasks', icon: 'mdi-format-list-checks', to: '/app/tasks', enabled: true },
     { title: 'Projects', icon: 'mdi-view-dashboard-outline', to: '/app/projects', enabled: true },
     { title: 'Calendar', icon: 'mdi-calendar-month-outline', to: '/app/calendar', enabled: true },
     { title: 'Templates', icon: 'mdi-file-document-edit-outline', to: '/app/templates', enabled: true },

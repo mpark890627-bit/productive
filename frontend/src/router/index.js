@@ -7,6 +7,7 @@ import ProjectsView from '../views/app/ProjectsView.vue';
 import ProjectDetailView from '../views/app/ProjectDetailView.vue';
 import ProjectBoardView from '../views/app/ProjectBoardView.vue';
 import InboxView from '../views/app/InboxView.vue';
+import TasksListView from '../views/app/TasksListView.vue';
 import TemplatesView from '../views/app/TemplatesView.vue';
 import ProjectTemplatesView from '../views/app/ProjectTemplatesView.vue';
 import CalendarView from '../views/app/CalendarView.vue';
@@ -37,6 +38,12 @@ const router = createRouter({
                     name: 'inbox',
                     component: InboxView,
                     meta: { requiresAuth: true, title: 'Inbox' },
+                },
+                {
+                    path: 'tasks',
+                    name: 'tasks',
+                    component: TasksListView,
+                    meta: { requiresAuth: true, title: 'Tasks', tabbed: true },
                 },
                 {
                     path: 'projects',

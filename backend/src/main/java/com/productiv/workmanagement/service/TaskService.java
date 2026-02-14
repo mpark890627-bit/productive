@@ -6,6 +6,7 @@ import com.productiv.workmanagement.domain.entity.Task;
 import com.productiv.workmanagement.domain.entity.TaskTag;
 import com.productiv.workmanagement.domain.entity.TaskTagId;
 import com.productiv.workmanagement.domain.entity.User;
+import com.productiv.workmanagement.domain.entity.enums.TaskPriority;
 import com.productiv.workmanagement.domain.entity.enums.TaskStatus;
 import com.productiv.workmanagement.domain.repository.TagRepository;
 import com.productiv.workmanagement.domain.repository.TaskRepository;
@@ -14,6 +15,7 @@ import com.productiv.workmanagement.domain.repository.UserRepository;
 import com.productiv.workmanagement.global.ResourceNotFoundException;
 import com.productiv.workmanagement.security.TaskAccessGuard;
 import com.productiv.workmanagement.web.dto.task.TaskCreateRequest;
+import com.productiv.workmanagement.web.dto.task.TaskListSummaryResponse;
 import com.productiv.workmanagement.web.dto.task.TaskResponse;
 import com.productiv.workmanagement.web.dto.task.TaskUpdateRequest;
 import java.time.LocalDate;
@@ -83,6 +85,87 @@ public class TaskService {
         );
 
         return toResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TaskResponse> searchOwnedTasks(
+        UUID currentUserId,
+        UUID projectId,
+        TaskStatus status,
+        TaskPriority priority,
+        UUID assigneeUserId,
+        LocalDate dueFrom,
+        LocalDate dueTo,
+        String keyword,
+        Pageable pageable
+    ) {
+        boolean projectFiltering = projectId != null;
+        UUID resolvedProjectId = projectFiltering ? projectId : currentUserId;
+        boolean statusFiltering = status != null;
+        TaskStatus resolvedStatus = statusFiltering ? status : TaskStatus.TODO;
+        boolean priorityFiltering = priority != null;
+        TaskPriority resolvedPriority = priorityFiltering ? priority : TaskPriority.MEDIUM;
+        boolean assigneeFiltering = assigneeUserId != null;
+        UUID resolvedAssigneeUserId = assigneeFiltering ? assigneeUserId : currentUserId;
+        boolean dueFromFiltering = dueFrom != null;
+        LocalDate resolvedDueFrom = dueFromFiltering ? dueFrom : LocalDate.of(1970, 1, 1);
+        boolean dueToFiltering = dueTo != null;
+        LocalDate resolvedDueTo = dueToFiltering ? dueTo : LocalDate.of(9999, 12, 31);
+        String keywordPattern = normalizeKeywordPattern(keyword);
+        boolean keywordFiltering = keywordPattern != null;
+        String resolvedKeywordPattern = keywordFiltering ? keywordPattern : "%";
+
+        Page<Task> taskPage = taskRepository.searchOwnedTasks(
+            currentUserId,
+            projectFiltering,
+            resolvedProjectId,
+            statusFiltering,
+            resolvedStatus,
+            priorityFiltering,
+            resolvedPriority,
+            assigneeFiltering,
+            resolvedAssigneeUserId,
+            dueFromFiltering,
+            resolvedDueFrom,
+            dueToFiltering,
+            resolvedDueTo,
+            keywordFiltering,
+            resolvedKeywordPattern,
+            pageable
+        );
+        Map<UUID, List<TaskResponse.TagItem>> tagsByTaskId = loadTagsByTaskIds(taskPage.getContent());
+        return taskPage.map(task -> toResponse(task, tagsByTaskId.getOrDefault(task.getId(), List.of())));
+    }
+
+    @Transactional(readOnly = true)
+    public TaskListSummaryResponse getOwnedSummary(UUID currentUserId, UUID projectId) {
+        boolean projectFiltering = projectId != null;
+        UUID resolvedProjectId = projectFiltering ? projectId : currentUserId;
+        LocalDate today = LocalDate.now();
+        LocalDate dueSoonEnd = today.plusDays(3);
+
+        long total = taskRepository.countOwnedTasks(currentUserId, projectFiltering, resolvedProjectId);
+        long inProgress = taskRepository.countOwnedTasksByStatus(
+            currentUserId,
+            projectFiltering,
+            resolvedProjectId,
+            TaskStatus.IN_PROGRESS
+        );
+        long dueSoon = taskRepository.countOwnedDueSoonTasks(
+            currentUserId,
+            projectFiltering,
+            resolvedProjectId,
+            today,
+            dueSoonEnd
+        );
+        long overdue = taskRepository.countOwnedOverdueTasks(
+            currentUserId,
+            projectFiltering,
+            resolvedProjectId,
+            today
+        );
+
+        return new TaskListSummaryResponse(total, inProgress, dueSoon, overdue);
     }
 
     @Transactional(readOnly = true)

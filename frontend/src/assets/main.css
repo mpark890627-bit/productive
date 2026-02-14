@@ -1,12 +1,16 @@
 :root {
-  color: #0f172a;
+  color: #0F172A;
   font-family: 'Pretendard Variable', 'Noto Sans KR', 'Segoe UI', sans-serif;
   --radius-md: 12px;
   --space-1: 8px;
   --space-2: 16px;
   --space-3: 24px;
   --space-4: 32px;
-  --text-muted: #5f6f86;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --bg-tint: #F6F9FF;
 }
 
 * {
@@ -24,18 +28,17 @@ body {
   line-height: 1.45;
   letter-spacing: 0.01em;
   background:
-    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.08), transparent 26%),
-    radial-gradient(circle at 100% 100%, rgba(15, 118, 110, 0.06), transparent 30%),
-    linear-gradient(180deg, #eaf0f8 0%, #eef3f9 100%);
+    radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.06), transparent 26%),
+    radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.05), transparent 30%),
+    linear-gradient(180deg, #f6f9ff 0%, #f8fbff 100%);
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.84);
+  background: rgba(255, 255, 255, 0.96);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(143, 160, 184, 0.24);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
   padding: var(--space-3);
-  backdrop-filter: blur(8px);
 }
 
 .app-page {
@@ -65,10 +68,10 @@ body {
 }
 
 .section-card {
-  border: 1px solid rgba(143, 160, 184, 0.22);
-  background: rgba(var(--v-theme-surface-bright), 0.75);
+  border: 1px solid var(--border-color);
+  background: rgba(var(--v-theme-surface-bright), 0.95);
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
 }
 
 .muted-text {
@@ -76,9 +79,31 @@ body {
 }
 
 :where(a, button, input, textarea, [role='button'], .v-btn, .v-field):focus-visible {
-  outline: 2px solid rgba(37, 99, 235, 0.75);
+  outline: 2px solid rgba(37, 99, 235, 0.7);
   outline-offset: 2px;
   border-radius: 10px;
+}
+
+.v-btn {
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.v-btn.v-btn--variant-flat.v-btn--color-primary:not(.v-btn--disabled):hover {
+  background: var(--primary-hover) !important;
+}
+
+.v-btn--variant-outlined {
+  border-color: var(--border-color) !important;
+}
+
+.v-field {
+  border-radius: var(--radius-md) !important;
+}
+
+.v-field--focused {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 @media (max-width: 960px) {

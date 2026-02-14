@@ -13,6 +13,7 @@ let __VLS_components;
 let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['project-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['project-table']} */ ;
+/** @type {__VLS_StyleScopedClasses['project-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['name-link']} */ ;
 // CSS variable injection 
 // CSS variable injection end 

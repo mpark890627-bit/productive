@@ -4,18 +4,18 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'
 const dashboardLight: ThemeDefinition = {
   dark: false,
   colors: {
-    primary: '#2563eb',
-    secondary: '#0f766e',
-    background: '#eef3f9',
-    surface: '#f8fbff',
+    primary: '#2563EB',
+    secondary: '#0EA5E9',
+    background: '#F6F9FF',
+    surface: '#FFFFFF',
     'surface-bright': '#ffffff',
-    'surface-variant': '#e7eef8',
-    outline: '#8ea0b8',
-    error: '#dc2626',
-    warning: '#d97706',
-    success: '#15803d',
-    info: '#0369a1',
-    'on-surface': '#0f172a',
+    'surface-variant': '#F2F6FF',
+    outline: '#E2E8F0',
+    error: '#DC2626',
+    warning: '#F59E0B',
+    success: '#16A34A',
+    info: '#0EA5E9',
+    'on-surface': '#0F172A',
   },
 }
 
@@ -23,7 +23,7 @@ const dashboardDark: ThemeDefinition = {
   dark: true,
   colors: {
     primary: '#60a5fa',
-    secondary: '#34d399',
+    secondary: '#38bdf8',
     background: '#0b1220',
     surface: '#101a2c',
     'surface-bright': '#172236',
@@ -56,7 +56,7 @@ const getInitialThemeName = (): 'dashboardLight' | 'dashboardDark' => {
 
 export const vuetify = createVuetify({
   theme: {
-    defaultTheme: getInitialThemeName(),
+    defaultTheme: 'dashboardLight',
     themes: {
       dashboardLight,
       dashboardDark,
@@ -71,6 +71,12 @@ export const vuetify = createVuetify({
       rounded: 'lg',
       height: 40,
       ripple: true,
+    },
+    VTabs: {
+      color: 'primary',
+    },
+    VTab: {
+      rounded: 'lg',
     },
     VTextField: {
       variant: 'outlined',
@@ -98,7 +104,7 @@ export const vuetify = createVuetify({
     },
     VCard: {
       rounded: 'lg',
-      elevation: 1,
+      elevation: 0,
     },
     VDialog: {
       persistent: false,

@@ -1,9 +1,9 @@
 <template>
-  <section class="inbox-view">
-    <v-card class="inbox-header" rounded="lg" elevation="1">
+  <section class="inbox-view app-page">
+    <v-card class="inbox-header section-card" rounded="lg" elevation="0">
       <div>
-        <h2>Inbox</h2>
-        <p>담당 태스크와 보는중 태스크를 빠르게 모아봅니다.</p>
+        <h2 class="page-title">Inbox</h2>
+        <p class="page-subtitle">담당 태스크와 보는중 태스크를 빠르게 모아봅니다.</p>
       </div>
       <div class="header-actions">
         <v-btn variant="outlined" prepend-icon="mdi-refresh" @click="reloadAll">새로고침</v-btn>
@@ -24,7 +24,7 @@
       <v-tab value="OVERDUE">연체</v-tab>
     </v-tabs>
 
-    <v-card class="filter-card" rounded="lg" elevation="1">
+    <v-card class="filter-card section-card" rounded="lg" elevation="0">
       <div class="filter-grid">
         <v-select
           v-model="statusModel"
@@ -87,7 +87,7 @@
       {{ inboxStore.taskError }}
     </v-alert>
 
-    <v-card rounded="lg" elevation="1">
+    <v-card class="section-card" rounded="lg" elevation="0">
       <v-skeleton-loader v-if="inboxStore.loadingTasks" type="list-item-three-line@4" class="pa-4" />
       <EmptyState
         v-else-if="inboxStore.tasks.length === 0"
@@ -361,39 +361,32 @@ onMounted(async () => {
 <style scoped>
 .inbox-view {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 
 .inbox-header {
-  padding: 14px 16px;
+  padding: 16px 18px;
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
-}
-
-.inbox-header h2 {
-  margin: 0;
-}
-
-.inbox-header p {
-  margin: 2px 0 0;
-  color: #64748b;
 }
 
 .header-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .mode-tabs {
-  background: rgba(var(--v-theme-surface), 0.7);
+  background: rgba(var(--v-theme-surface), 0.95);
+  border: 1px solid rgba(var(--v-theme-outline), 0.85);
   border-radius: 12px;
-  padding-inline: 8px;
+  padding-inline: 10px;
 }
 
 .filter-card {
-  padding: 14px;
+  padding: 16px;
 }
 
 .filter-grid {
@@ -415,6 +408,11 @@ onMounted(async () => {
 
 .task-row {
   cursor: pointer;
+  border-radius: 10px;
+}
+
+.task-row:hover {
+  background: rgba(37, 99, 235, 0.05);
 }
 
 .task-title-row {
@@ -436,6 +434,7 @@ onMounted(async () => {
 
 .task-description {
   margin: 4px 0 0;
+  color: #64748b;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -446,6 +445,8 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 8px;
+  color: #64748b;
+  font-size: 0.92rem;
 }
 
 @media (max-width: 1000px) {

@@ -104,4 +104,24 @@ const emit = defineEmits<{
 .menu-list {
   padding: 10px 10px;
 }
+
+.menu-list :deep(.v-list-item) {
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+}
+
+.menu-list :deep(.v-list-item:hover) {
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.menu-list :deep(.v-list-item--active) {
+  background: rgba(37, 99, 235, 0.06);
+  border-color: rgba(37, 99, 235, 0.16);
+  box-shadow: inset 3px 0 0 rgba(37, 99, 235, 0.9);
+}
+
+.menu-list :deep(.v-list-item--active .v-list-item-title) {
+  color: rgb(var(--v-theme-primary));
+  font-weight: 700;
+}
 </style>

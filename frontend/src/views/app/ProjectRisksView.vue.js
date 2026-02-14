@@ -165,9 +165,8 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
-/** @type {__VLS_StyleScopedClasses['header-card']} */ ;
-/** @type {__VLS_StyleScopedClasses['header-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-grid']} */ ;
+/** @type {__VLS_StyleScopedClasses['risk-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['title-cell']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-grid']} */ ;
@@ -176,25 +175,29 @@ let __VLS_directives;
 // CSS variable injection 
 // CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "risk-register" },
+    ...{ class: "risk-register app-page" },
 });
 const __VLS_0 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
-    ...{ class: "header-card" },
+    ...{ class: "header-card section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_2 = __VLS_1({
-    ...{ class: "header-card" },
+    ...{ class: "header-card section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 __VLS_3.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
-__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({});
-__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
+    ...{ class: "page-title" },
+});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
+    ...{ class: "page-subtitle" },
+});
 (__VLS_ctx.projectName);
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "header-actions" },
@@ -241,12 +244,14 @@ const __VLS_16 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_17 = __VLS_asFunctionalComponent(__VLS_16, new __VLS_16({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_18 = __VLS_17({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_17));
 __VLS_19.slots.default;
 const __VLS_20 = {}.VCardText;
@@ -266,12 +271,14 @@ const __VLS_24 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_25 = __VLS_asFunctionalComponent(__VLS_24, new __VLS_24({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_26 = __VLS_25({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_25));
 __VLS_27.slots.default;
 const __VLS_28 = {}.VCardText;
@@ -291,12 +298,14 @@ const __VLS_32 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_33 = __VLS_asFunctionalComponent(__VLS_32, new __VLS_32({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_34 = __VLS_33({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_33));
 __VLS_35.slots.default;
 const __VLS_36 = {}.VCardText;
@@ -369,12 +378,14 @@ const __VLS_55 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_56 = __VLS_asFunctionalComponent(__VLS_55, new __VLS_55({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_57 = __VLS_56({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_56));
 __VLS_58.slots.default;
 const __VLS_59 = {}.VCardText;
@@ -916,12 +927,20 @@ var __VLS_186;
 var __VLS_146;
 var __VLS_142;
 /** @type {__VLS_StyleScopedClasses['risk-register']} */ ;
+/** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-subtitle']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-grid']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['summary-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['filters']} */ ;
 /** @type {__VLS_StyleScopedClasses['risk-table']} */ ;
 /** @type {__VLS_StyleScopedClasses['title-cell']} */ ;

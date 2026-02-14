@@ -157,34 +157,37 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
-/** @type {__VLS_StyleScopedClasses['inbox-header']} */ ;
-/** @type {__VLS_StyleScopedClasses['inbox-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['filter-actions']} */ ;
+/** @type {__VLS_StyleScopedClasses['task-row']} */ ;
 /** @type {__VLS_StyleScopedClasses['inbox-header']} */ ;
 /** @type {__VLS_StyleScopedClasses['filter-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['filter-actions']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
 __VLS_asFunctionalElement(__VLS_intrinsicElements.section, __VLS_intrinsicElements.section)({
-    ...{ class: "inbox-view" },
+    ...{ class: "inbox-view app-page" },
 });
 const __VLS_0 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_1 = __VLS_asFunctionalComponent(__VLS_0, new __VLS_0({
-    ...{ class: "inbox-header" },
+    ...{ class: "inbox-header section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_2 = __VLS_1({
-    ...{ class: "inbox-header" },
+    ...{ class: "inbox-header section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_1));
 __VLS_3.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({});
-__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({});
-__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.h2, __VLS_intrinsicElements.h2)({
+    ...{ class: "page-title" },
+});
+__VLS_asFunctionalElement(__VLS_intrinsicElements.p, __VLS_intrinsicElements.p)({
+    ...{ class: "page-subtitle" },
+});
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
     ...{ class: "header-actions" },
 });
@@ -304,14 +307,14 @@ const __VLS_44 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_45 = __VLS_asFunctionalComponent(__VLS_44, new __VLS_44({
-    ...{ class: "filter-card" },
+    ...{ class: "filter-card section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_46 = __VLS_45({
-    ...{ class: "filter-card" },
+    ...{ class: "filter-card section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_45));
 __VLS_47.slots.default;
 __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
@@ -519,12 +522,14 @@ const __VLS_96 = {}.VCard;
 /** @type {[typeof __VLS_components.VCard, typeof __VLS_components.vCard, typeof __VLS_components.VCard, typeof __VLS_components.vCard, ]} */ ;
 // @ts-ignore
 const __VLS_97 = __VLS_asFunctionalComponent(__VLS_96, new __VLS_96({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }));
 const __VLS_98 = __VLS_97({
+    ...{ class: "section-card" },
     rounded: "lg",
-    elevation: "1",
+    elevation: "0",
 }, ...__VLS_functionalComponentArgsRest(__VLS_97));
 __VLS_99.slots.default;
 if (__VLS_ctx.inboxStore.loadingTasks) {
@@ -924,13 +929,19 @@ __VLS_215.slots.default;
 (__VLS_ctx.snackbar.message);
 var __VLS_215;
 /** @type {__VLS_StyleScopedClasses['inbox-view']} */ ;
+/** @type {__VLS_StyleScopedClasses['app-page']} */ ;
 /** @type {__VLS_StyleScopedClasses['inbox-header']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-title']} */ ;
+/** @type {__VLS_StyleScopedClasses['page-subtitle']} */ ;
 /** @type {__VLS_StyleScopedClasses['header-actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['mode-tabs']} */ ;
 /** @type {__VLS_StyleScopedClasses['filter-card']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['filter-grid']} */ ;
 /** @type {__VLS_StyleScopedClasses['filter-actions']} */ ;
 /** @type {__VLS_StyleScopedClasses['mt-3']} */ ;
+/** @type {__VLS_StyleScopedClasses['section-card']} */ ;
 /** @type {__VLS_StyleScopedClasses['pa-4']} */ ;
 /** @type {__VLS_StyleScopedClasses['py-8']} */ ;
 /** @type {__VLS_StyleScopedClasses['task-row']} */ ;

@@ -13,6 +13,11 @@ interface GetProjectTasksParams {
   keyword?: string
 }
 
+interface GetGlobalTasksParams extends GetProjectTasksParams {
+  projectId?: string
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH'
+}
+
 interface UpdateTaskPayload {
   title?: string
   description?: string | null
@@ -41,6 +46,34 @@ export async function getProjectTasks(projectId: string, params: GetProjectTasks
     size: envelope.meta?.size ?? envelope.data.length,
     number: envelope.meta?.page ?? 0,
   } satisfies PageResponse<TaskItem>
+}
+
+export async function listTasksGlobal(params: GetGlobalTasksParams = {}) {
+  const { data } = await apiClient.get('/api/tasks', { params })
+  const envelope = data as ApiEnvelope<TaskItem[], ApiMeta | null>
+  return {
+    content: envelope.data,
+    totalElements: envelope.meta?.totalElements ?? envelope.data.length,
+    totalPages: envelope.meta?.totalPages ?? 1,
+    size: envelope.meta?.size ?? envelope.data.length,
+    number: envelope.meta?.page ?? 0,
+  } satisfies PageResponse<TaskItem>
+}
+
+export interface TasksSummary {
+  totalCount: number
+  inProgressCount: number
+  dueSoonCount: number
+  overdueCount: number
+}
+
+export async function getTasksSummary(projectId?: string) {
+  const { data } = await apiClient.get('/api/tasks/summary', {
+    params: {
+      projectId: projectId || undefined,
+    },
+  })
+  return unwrapData<TasksSummary>(data as ApiEnvelope<TasksSummary>)
 }
 
 export async function createTaskInProject(projectId: string, payload: CreateTaskPayload) {
