@@ -20,6 +20,7 @@ const tagSubmitting = ref(false);
 const assigneeSearch = ref('');
 const assigneeLoading = ref(false);
 const assigneeOptions = ref([]);
+let assigneeSearchTimer = null;
 const authStore = useAuthStore();
 const form = reactive({
     title: '',
@@ -211,7 +212,22 @@ watch(() => [props.open, props.task?.id], async () => {
         await Promise.all([loadComments(), loadAssigneeOptions()]);
     }
 }, { immediate: true });
+watch(assigneeSearch, (keyword) => {
+    if (!props.open || !props.task?.id) {
+        return;
+    }
+    if (assigneeSearchTimer) {
+        clearTimeout(assigneeSearchTimer);
+    }
+    assigneeSearchTimer = setTimeout(() => {
+        void loadAssigneeOptions(keyword);
+    }, 250);
+});
 onUnmounted(() => {
+    if (assigneeSearchTimer) {
+        clearTimeout(assigneeSearchTimer);
+        assigneeSearchTimer = null;
+    }
     assigneeSearch.value = '';
 });
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */

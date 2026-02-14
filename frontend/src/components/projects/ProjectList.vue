@@ -9,9 +9,9 @@
     hide-default-footer
   >
     <template #[`item.name`]="{ item }">
-      <div class="name-cell">
+      <button type="button" class="name-link" @click="$emit('open', item)">
         <strong>{{ item.name }}</strong>
-      </div>
+      </button>
     </template>
 
     <template #[`item.description`]="{ item }">
@@ -24,9 +24,29 @@
 
     <template #[`item.actions`]="{ item }">
       <div class="actions">
-        <v-btn size="small" variant="tonal" @click="$emit('open', item)">열기</v-btn>
-        <v-btn size="small" variant="outlined" @click="$emit('edit', item)">수정</v-btn>
-        <v-btn size="small" color="error" variant="text" @click="$emit('delete', item)">삭제</v-btn>
+        <v-tooltip text="수정" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              v-bind="tooltipProps"
+              icon="mdi-pencil-outline"
+              size="small"
+              variant="text"
+              @click="$emit('edit', item)"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip text="삭제" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              v-bind="tooltipProps"
+              icon="mdi-trash-can-outline"
+              size="small"
+              color="error"
+              variant="text"
+              @click="$emit('delete', item)"
+            />
+          </template>
+        </v-tooltip>
       </div>
     </template>
   </v-data-table>
@@ -62,8 +82,19 @@ const formatDate = (dateTime: string) => new Date(dateTime).toLocaleString()
   overflow: hidden;
 }
 
-.name-cell {
+.name-link {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: rgb(var(--v-theme-primary));
+  text-align: left;
+  font: inherit;
   max-width: 240px;
+}
+
+.name-link:hover {
+  text-decoration: underline;
 }
 
 .desc-cell {

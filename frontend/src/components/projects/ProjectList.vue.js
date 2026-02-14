@@ -11,6 +11,7 @@ debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
 let __VLS_components;
 let __VLS_directives;
+/** @type {__VLS_StyleScopedClasses['name-link']} */ ;
 // CSS variable injection 
 // CSS variable injection end 
 const __VLS_0 = {}.VDataTable;
@@ -39,8 +40,12 @@ __VLS_3.slots.default;
 {
     const { [__VLS_tryAsConstant(`item.name`)]: __VLS_thisSlot } = __VLS_3.slots;
     const [{ item }] = __VLS_getSlotParams(__VLS_thisSlot);
-    __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
-        ...{ class: "name-cell" },
+    __VLS_asFunctionalElement(__VLS_intrinsicElements.button, __VLS_intrinsicElements.button)({
+        ...{ onClick: (...[$event]) => {
+                __VLS_ctx.$emit('open', item);
+            } },
+        type: "button",
+        ...{ class: "name-link" },
     });
     __VLS_asFunctionalElement(__VLS_intrinsicElements.strong, __VLS_intrinsicElements.strong)({});
     (item.name);
@@ -64,81 +69,98 @@ __VLS_3.slots.default;
     __VLS_asFunctionalElement(__VLS_intrinsicElements.div, __VLS_intrinsicElements.div)({
         ...{ class: "actions" },
     });
-    const __VLS_5 = {}.VBtn;
-    /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
+    const __VLS_5 = {}.VTooltip;
+    /** @type {[typeof __VLS_components.VTooltip, typeof __VLS_components.vTooltip, typeof __VLS_components.VTooltip, typeof __VLS_components.vTooltip, ]} */ ;
     // @ts-ignore
     const __VLS_6 = __VLS_asFunctionalComponent(__VLS_5, new __VLS_5({
-        ...{ 'onClick': {} },
-        size: "small",
-        variant: "tonal",
+        text: "수정",
+        location: "top",
     }));
     const __VLS_7 = __VLS_6({
-        ...{ 'onClick': {} },
-        size: "small",
-        variant: "tonal",
+        text: "수정",
+        location: "top",
     }, ...__VLS_functionalComponentArgsRest(__VLS_6));
-    let __VLS_9;
-    let __VLS_10;
-    let __VLS_11;
-    const __VLS_12 = {
-        onClick: (...[$event]) => {
-            __VLS_ctx.$emit('open', item);
-        }
-    };
     __VLS_8.slots.default;
+    {
+        const { activator: __VLS_thisSlot } = __VLS_8.slots;
+        const { props: tooltipProps } = __VLS_getSlotParam(__VLS_thisSlot);
+        const __VLS_9 = {}.VBtn;
+        /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
+        // @ts-ignore
+        const __VLS_10 = __VLS_asFunctionalComponent(__VLS_9, new __VLS_9({
+            ...{ 'onClick': {} },
+            ...(tooltipProps),
+            icon: "mdi-pencil-outline",
+            size: "small",
+            variant: "text",
+        }));
+        const __VLS_11 = __VLS_10({
+            ...{ 'onClick': {} },
+            ...(tooltipProps),
+            icon: "mdi-pencil-outline",
+            size: "small",
+            variant: "text",
+        }, ...__VLS_functionalComponentArgsRest(__VLS_10));
+        let __VLS_13;
+        let __VLS_14;
+        let __VLS_15;
+        const __VLS_16 = {
+            onClick: (...[$event]) => {
+                __VLS_ctx.$emit('edit', item);
+            }
+        };
+        var __VLS_12;
+    }
     var __VLS_8;
-    const __VLS_13 = {}.VBtn;
-    /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
+    const __VLS_17 = {}.VTooltip;
+    /** @type {[typeof __VLS_components.VTooltip, typeof __VLS_components.vTooltip, typeof __VLS_components.VTooltip, typeof __VLS_components.vTooltip, ]} */ ;
     // @ts-ignore
-    const __VLS_14 = __VLS_asFunctionalComponent(__VLS_13, new __VLS_13({
-        ...{ 'onClick': {} },
-        size: "small",
-        variant: "outlined",
+    const __VLS_18 = __VLS_asFunctionalComponent(__VLS_17, new __VLS_17({
+        text: "삭제",
+        location: "top",
     }));
-    const __VLS_15 = __VLS_14({
-        ...{ 'onClick': {} },
-        size: "small",
-        variant: "outlined",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_14));
-    let __VLS_17;
-    let __VLS_18;
-    let __VLS_19;
-    const __VLS_20 = {
-        onClick: (...[$event]) => {
-            __VLS_ctx.$emit('edit', item);
-        }
-    };
-    __VLS_16.slots.default;
-    var __VLS_16;
-    const __VLS_21 = {}.VBtn;
-    /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
-    // @ts-ignore
-    const __VLS_22 = __VLS_asFunctionalComponent(__VLS_21, new __VLS_21({
-        ...{ 'onClick': {} },
-        size: "small",
-        color: "error",
-        variant: "text",
-    }));
-    const __VLS_23 = __VLS_22({
-        ...{ 'onClick': {} },
-        size: "small",
-        color: "error",
-        variant: "text",
-    }, ...__VLS_functionalComponentArgsRest(__VLS_22));
-    let __VLS_25;
-    let __VLS_26;
-    let __VLS_27;
-    const __VLS_28 = {
-        onClick: (...[$event]) => {
-            __VLS_ctx.$emit('delete', item);
-        }
-    };
-    __VLS_24.slots.default;
-    var __VLS_24;
+    const __VLS_19 = __VLS_18({
+        text: "삭제",
+        location: "top",
+    }, ...__VLS_functionalComponentArgsRest(__VLS_18));
+    __VLS_20.slots.default;
+    {
+        const { activator: __VLS_thisSlot } = __VLS_20.slots;
+        const { props: tooltipProps } = __VLS_getSlotParam(__VLS_thisSlot);
+        const __VLS_21 = {}.VBtn;
+        /** @type {[typeof __VLS_components.VBtn, typeof __VLS_components.vBtn, ]} */ ;
+        // @ts-ignore
+        const __VLS_22 = __VLS_asFunctionalComponent(__VLS_21, new __VLS_21({
+            ...{ 'onClick': {} },
+            ...(tooltipProps),
+            icon: "mdi-trash-can-outline",
+            size: "small",
+            color: "error",
+            variant: "text",
+        }));
+        const __VLS_23 = __VLS_22({
+            ...{ 'onClick': {} },
+            ...(tooltipProps),
+            icon: "mdi-trash-can-outline",
+            size: "small",
+            color: "error",
+            variant: "text",
+        }, ...__VLS_functionalComponentArgsRest(__VLS_22));
+        let __VLS_25;
+        let __VLS_26;
+        let __VLS_27;
+        const __VLS_28 = {
+            onClick: (...[$event]) => {
+                __VLS_ctx.$emit('delete', item);
+            }
+        };
+        var __VLS_24;
+    }
+    var __VLS_20;
 }
 var __VLS_3;
 /** @type {__VLS_StyleScopedClasses['project-table']} */ ;
-/** @type {__VLS_StyleScopedClasses['name-cell']} */ ;
+/** @type {__VLS_StyleScopedClasses['name-link']} */ ;
 /** @type {__VLS_StyleScopedClasses['desc-cell']} */ ;
 /** @type {__VLS_StyleScopedClasses['actions']} */ ;
 var __VLS_dollars;
