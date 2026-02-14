@@ -14,6 +14,7 @@ import CalendarView from '../views/app/CalendarView.vue';
 import ProjectRisksView from '../views/app/ProjectRisksView.vue';
 import RiskDetailView from '../views/app/RiskDetailView.vue';
 import { useAuthStore } from '../stores/auth';
+import { useTabsStore } from '../stores/tabsStore';
 import { pinia } from '../plugins/pinia';
 const router = createRouter({
     history: createWebHistory(),
@@ -23,8 +24,8 @@ const router = createRouter({
             path: '/',
             component: AuthLayout,
             children: [
-                { path: 'login', name: 'login', component: LoginView, meta: { title: 'Login' } },
-                { path: 'register', name: 'register', component: RegisterView, meta: { title: 'Register' } },
+                { path: 'login', name: 'login', component: LoginView, meta: { title: 'Login', tabbed: false } },
+                { path: 'register', name: 'register', component: RegisterView, meta: { title: 'Register', tabbed: false } },
             ],
         },
         {
@@ -37,65 +38,78 @@ const router = createRouter({
                     path: 'inbox',
                     name: 'inbox',
                     component: InboxView,
-                    meta: { requiresAuth: true, title: 'Inbox' },
+                    meta: { requiresAuth: true, title: 'Inbox', tabbed: true, affix: true, keepAlive: true },
                 },
                 {
                     path: 'tasks',
                     name: 'tasks',
                     component: TasksListView,
-                    meta: { requiresAuth: true, title: 'Tasks', tabbed: true },
+                    meta: { requiresAuth: true, title: 'Tasks', tabbed: true, keepAlive: true },
                 },
                 {
                     path: 'projects',
                     name: 'projects',
                     component: ProjectsView,
-                    meta: { requiresAuth: true, title: 'Projects' },
+                    meta: { requiresAuth: true, title: 'Projects', tabbed: true, affix: true, keepAlive: true },
                 },
                 {
                     path: 'calendar',
                     name: 'calendar',
                     component: CalendarView,
-                    meta: { requiresAuth: true, title: 'Calendar' },
+                    meta: { requiresAuth: true, title: 'Calendar', tabbed: true, keepAlive: true },
                 },
                 {
                     path: 'templates',
                     name: 'templates',
                     component: TemplatesView,
-                    meta: { requiresAuth: true, title: 'Templates' },
+                    meta: { requiresAuth: true, title: 'Templates', tabbed: true, keepAlive: true },
                 },
                 {
                     path: 'projects/:id',
                     name: 'project-detail',
                     component: ProjectDetailView,
-                    meta: { requiresAuth: true, title: 'Project Detail' },
+                    meta: { requiresAuth: true, title: 'Project Detail', tabbed: true, keepAlive: true },
                 },
                 {
                     path: 'projects/:id/board',
                     name: 'project-board',
                     component: ProjectBoardView,
-                    meta: { requiresAuth: true, title: 'Kanban Board' },
+                    meta: { requiresAuth: true, title: 'Kanban Board', tabbed: true, keepAlive: true },
                 },
                 {
                     path: 'projects/:id/templates',
                     name: 'project-templates',
                     component: ProjectTemplatesView,
-                    meta: { requiresAuth: true, title: 'Project Templates' },
+                    meta: { requiresAuth: true, title: 'Project Templates', tabbed: true, keepAlive: true },
                 },
                 {
                     path: 'projects/:projectId/risks',
                     name: 'project-risks',
                     component: ProjectRisksView,
-                    meta: { requiresAuth: true, title: 'Risk Register' },
+                    meta: { requiresAuth: true, title: 'Risk Register', tabbed: true, keepAlive: true },
                 },
                 {
                     path: 'projects/:projectId/risks/:riskId',
                     name: 'risk-detail',
                     component: RiskDetailView,
-                    meta: { requiresAuth: true, title: 'Risk Detail' },
+                    meta: {
+                        requiresAuth: true,
+                        title: 'Risk Detail',
+                        tabbed: true,
+                        keepAlive: true,
+                        tabKeyStrategy: 'FULLPATH',
+                    },
                 },
             ],
         },
     ],
+});
+const tabsStore = useTabsStore(pinia);
+tabsStore.restore({
+    validatePath: (fullPath) => {
+        const resolved = router.resolve(fullPath);
+        return resolved.matched.length > 0;
+    },
 });
 router.beforeEach((to) => {
     const authStore = useAuthStore(pinia);
@@ -107,5 +121,8 @@ router.beforeEach((to) => {
         return '/app/projects';
     }
     return true;
+});
+router.afterEach((to) => {
+    tabsStore.openOrActivateFromRoute(to);
 });
 export default router;
